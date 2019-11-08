@@ -24,7 +24,7 @@ public class Account {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long accountID;	
 	//private AccountType accountType;
-	private AccountType accountType;
+	private String accountType;
 	private String accountHolder;
 	
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
@@ -67,11 +67,11 @@ public class Account {
 		this.accountID = accountID;
 	}
 
-	public AccountType getAccountType() {
+	public String getAccountType() {
 		return accountType;
 	}
 
-	public void setAccountType(AccountType accountType) {
+	public void setAccountType(String accountType) {
 		this.accountType = accountType;
 	}
 

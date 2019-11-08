@@ -16,7 +16,6 @@
 	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-
 <script type="text/javascript">
 	function addDashesPhone(f) {
 		var r = /(\D+)/g, npa = '', nxx = '', last4 = '';
@@ -27,7 +26,7 @@
 		f.value = npa + '-' + nxx + '-' + last4;
 	}
 	/* function toggle(f) {
-		if (document.getElementById("toggle").innerText == "Customer") {
+		if (document.getElementById("toggle").innerText == "Account") {
 			document.getElementById("userBtn").style.display = "inline-block";
 			document.getElementById("customerBtn").style.display = "inline-block";
 			document.getElementById("accountBtn").style.display = "inline-block";
@@ -41,11 +40,11 @@
 			document.getElementById("customerBtn").style.display = "none";
 			document.getElementById("accountBtn").style.display = "none";
 			document.getElementById("branchBtn").style.display = "none";
-			document.getElementById("toggle").innerText = "Customer";
+			document.getElementById("toggle").innerText = "Account";
 		}
 	} */
 </script>
-<title>Customer Form</title>
+<title>Account Form</title>
 <style>
 body {
 	background-color: whitesmoke;
@@ -76,6 +75,7 @@ body {
 </style>
 </head>
 <body>
+
 	<div class="Navigation-bar">
 		<table>
 			<thead>
@@ -87,7 +87,6 @@ body {
 					<th align="center" colspan="4"><a href="/login?logout">Logout
 							${pageContext.request.userPrincipal.authorities[0]} </a></th>
 				</tr>
-
 			</thead>
 			<tbody>
 				<tr>
@@ -103,7 +102,6 @@ body {
 								class="btn btn-primary">Account</button></a></td>
 					<td><a href="/branchForm"><button id="branchBtn"
 								class="btn btn-primary">Branch</button></a></td>
-
 					<sec:authorize access="hasAuthority('user')">
 						<td><a href="/contact"><button id="branchBtn"
 									class="btn btn-primary">Contact</button></a></td>
@@ -114,142 +112,113 @@ body {
 		</table>
 	</div>
 
-	<!-- If the customer already having a customer account  -->
-	<%
-		if (session.getAttribute("registered") == null) {
-	%>
+	<% if(session.getAttribute("registered") != null){ %>
 	<div class="form-group">
-		<form:form action="saveCustomer" method="post"
-			modelAttribute="customer">
+		<form:form action="saveAccount" method="post" modelAttribute="account">
 
 			<table>
 				<tr>
-					<th align="center" colspan="4">Customer Form</th>
+					<th align="center" colspan="4">Account Form</th>
 				</tr>
 				<tr>
-					<td>Name</td>
-					<td><form:input type="text" name="customerName"
-							path="customerName" /></td>
-					<td><form:errors cssClass="error" path="customerName" /></td>
+					<td>Type</td>
+					<td><form:radiobutton name="accountType" path="accountType"
+							value="SAVING" label="Saving" /> <form:radiobutton
+							name="accountType" path="accountType" value="CHECKING"
+							label="Checking" /> <form:radiobutton name="accountType"
+							path="accountType" value="CREDIT" label="Credit" /> <form:radiobutton
+							name="accountType" path="accountType" value="DEBIT" label="Debit" /></td>
+					<td><form:errors cssClass="error" path="accountType" /></td>
 				</tr>
 				<tr>
-					<td>Email</td>
-					<td><form:input type="text" name="customerEmail"
-							value='<%=session.getAttribute("email") %>' path="customerEmail" readonly="true"/></td>
-					<td><form:errors cssClass="error" path="customerEmail" /></td>
+					<td>Holder</td>
+					<td><form:input type="text" name="accountHolder"
+							path="accountHolder" /></td>
+					<td><form:errors cssClass="error" path="accountHolder" /></td>
 				</tr>
 				<tr>
-					<td>Phone</td>
-					<td><form:input type="text" name="customerPhone"
-							placeholder="773-202-xxxx" onkeypress="addDashesPhone(this)"
-							maxlength="12" path="customerPhone" /></td>
-					<td><form:errors cssClass="error" path="customerPhone" /></td>
+					<td>Open Date</td>
+					<td><form:input type="date" name="accountOpenDate"
+							path="accountOpenDate" /></td>
+					<td><form:errors cssClass="error" path="accountOpenDate" /></td>
 				</tr>
 				<tr>
-					<td>Gender</td>
-					<td><form:radiobutton name="customerGender"
-							path="customerGender" value="male" label="male" checked="true" />
-						<form:radiobutton name="customerGender" path="customerGender"
-							value="female" label="female" /> <form:radiobutton
-							name="customerGender" path="customerGender"
-							value="rather not say" label="N/A" /></td>
-				</tr>
-				<tr>
-					<td>SSN</td>
-					<td><form:input type="text" name="customerSsn"
-							placeholder="181-93-xxxx" onkeypress="addDashesPhone(this)"
-							maxlength="11" path="customerSsn" /></td>
-					<td><form:errors cssClass="error" path="customerSsn" /></td>
-				</tr>
-				<tr>
-					<td>Date Of Birth</td>
-					<td><form:input type="date" name="customerDob"
-							path="customerDob" /></td>
-					<td><form:errors cssClass="error" path="customerDob" /></td>
+					<td>Balance</td>
+					<td><form:input name="accountBalance" path="accountBalance"
+							placeholder="$12,000" />
+					<td><form:errors cssClass="error" path="accountBalance" /></td>
 				</tr>
 
-				<%
-					// Disabling this Button for user login
-					if (session.getAttribute("Admin") == null) {
-				%>
-				
-					<tr>
-						<td><button class="btn btn-primary" type="submit"
-								value="save">Submit</button></td>
-					</tr>
-
-				<%
-					}
-				%>
-
+				<tr>
+					<td><button class="btn btn-primary" type="submit" value="save">Submit</button></td>
+				</tr>
 			</table>
 		</form:form>
 	</div>
 
-
-	<%
-		} else {
-	%>
-	<div>
-		<h2>The customer is already having an account</h2>
-	</div>
-	<%
-		}
-	%>
-
-
-
-
-
-
+	<%}else{ %>
+		<div>
+			<h2>Customer Must Register :)</h2>
+		</div>
+	
+	<%} %>
 
 	<sec:authorize access="hasAuthority('admin')">
-		<c:if test="${not empty customers}">
+		<c:if test="${not empty accounts}">
 			<div style="overflow: auto">
 				<table border="1">
-					<tr>
-						<th>Id</th>
-						<th>Name</th>
-						<th>Email</th>
-						<th>Phone</th>
-						<th>Gender</th>
-						<th>SSN</th>
-						<th>DOB</th>
-						<th>Action</th>
-					<tr>
-						<c:forEach items="${customers}" var="customer">
-
+					<thead>
+						<tr>
+							<th>Id</th>
+							<th>Type</th>
+							<th>Holder</th>
+							<th>Open Date</th>
+							<th>Balance</th>
+							<th>Action</th>
+						<tr>
+					</thead>
+					<c:forEach items="${accounts}" var="account">
+						<tbody>
 							<tr>
-								<td>${customer.customerId}</td>
-								<td>${customer.customerName}</td>
-								<td>${customer.customerEmail}</td>
-								<td>${customer.customerPhone}</td>
-								<td>${customer.customerGender}</td>
-								<td>${customer.customerSsn}</td>
-								<td>${customer.customerDob}</td>
-								<td>
-									<%-- <a
-									href="/updateCustomer?customerId=${customer.customerId}&customerName=${customer.customerName}
-							&customerEmail=${customer.customerEmail}
-							&customerPhone=${customer.customerPhone}&customerGender=${customer.customerGender}
-							&customerSsn=${customer.customerSsn}&customerDob=${customer.customerDob}">Update
-								</a>  &nbsp; &nbsp; &nbsp; --%> <a
-									href="/deleteCustomer?customerId=${customer.customerId}">Delete</a>
-								</td>
-
+								<td>${account.accountID}</td>
+								<td>${account.accountType}</td>
+								<td>${account.accountHolder}</td>
+								<td>${account.accountOpenDate}</td>
+								<td>$${account.accountBalance}</td>
+								<td><a href="/deleteAccount?accountId=${account.accountID}">Delete</a></td>
 							</tr>
-
-						</c:forEach>
+						</tbody>
+					</c:forEach>
 				</table>
 			</div>
 		</c:if>
 	</sec:authorize>
-	<%-- <%=session.getAttribute("user")%> --%>
 
 	${status}
 
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

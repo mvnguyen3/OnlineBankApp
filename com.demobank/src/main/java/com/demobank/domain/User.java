@@ -11,11 +11,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.Transient;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlTransient;
 
 
 
@@ -24,14 +26,9 @@ public class User {
 	
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)	
-	private long userIndex;
-	
-
 	@NotNull
 	private long userId;
 	
-
 	@NotEmpty
 	private String username;
 
@@ -44,6 +41,7 @@ public class User {
 	@Size(min = 12, max = 12)
 	private String userMobile;
 
+	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "user_role", joinColumns = { @JoinColumn(name = "userId") }, inverseJoinColumns = {
 			@JoinColumn(name = "roleId") })
@@ -93,6 +91,7 @@ public class User {
 		this.userMobile = userMobile;
 	}
 
+	@XmlTransient // Should not get user role ...
 	public Set<Role> getUserRoles() {
 		return userRoles;
 	}

@@ -42,7 +42,19 @@ public class Role {
 	public void setRoleUsers(Set<User> roleUsers) {
 		this.roleUsers = roleUsers;
 	}
-	
-	
-	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

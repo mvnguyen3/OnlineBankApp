@@ -12,6 +12,8 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter;
 import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -31,6 +33,7 @@ import com.demobank.domain.Transaction;
 @Configuration
 @EnableWebMvc
 public class AppConfig implements WebMvcConfigurer {
+	
 	
 	// Open a connection
 	@Bean
@@ -112,6 +115,32 @@ public class AppConfig implements WebMvcConfigurer {
 		viewResolver.setViewClass(JstlView.class);
 		
 		return viewResolver;		
+	}
+	
+	@Bean
+	public JavaMailSender mailSender() {
+		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+		mailSender.setHost("smtp.gmail.com");
+		mailSender.setPort(587);
+		mailSender.setUsername("synergyit171@gmail.com");
+		mailSender.setPassword("fremont123!");
+		
+		Properties javaMailProperties = new Properties();
+		//transport protocol
+		javaMailProperties.setProperty("mail.transport.protocol", "smtp"); // smtp -> Simple Mail Transport Protocol, othe email protocols are POP and IMAP
+		
+		// authorization
+		javaMailProperties.setProperty("mail.smtp.auth", "true");
+		
+		// enable the transport layer security
+	   javaMailProperties.setProperty("mail.smtp.starttls.enable", "true");
+		
+		// print the authorization and email sending activity
+		javaMailProperties.setProperty("mail.debug", "true");
+		
+		mailSender.setJavaMailProperties(javaMailProperties);
+		
+		return mailSender;
 	}
 	
 }

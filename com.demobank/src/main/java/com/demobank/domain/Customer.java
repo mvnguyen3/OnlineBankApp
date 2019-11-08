@@ -10,6 +10,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity(name = "customer") // Create table named customer
@@ -35,8 +37,8 @@ public class Customer {
 	@OneToMany
 	private Set<Account> customerAccounts = new HashSet<>();
 
-	@OneToMany
-	private Set<User> users = new HashSet<>();
+	@OneToOne
+	private User user;
 
 	public Customer() {
 		// TODO Auto-generated constructor stub
@@ -115,12 +117,12 @@ public class Customer {
 		this.customerAccounts = customerAccounts;
 	}
 
-	public Set<User> getUsers() {
-		return users;
+	public User getUsers() {
+		return user;
 	}
 
-	public void setUsers(Set<User> users) {
-		this.users = users;
+	public void setUsers(User user) {
+		this.user = user;
 	}
 
 	@Override
@@ -128,7 +130,7 @@ public class Customer {
 		return "Customer [customerId=" + customerId + ", customerName=" + customerName + ", customerEmail="
 				+ customerEmail + ", customerPhone=" + customerPhone + ", customerGender=" + customerGender
 				+ ", customerSsn=" + customerSsn + ", customerDob=" + customerDob + ", address=" + address
-				+ ", customerAccounts=" + customerAccounts + ", users=" + users + "]";
+				+ ", customerAccounts=" + customerAccounts + ", users=" + user + "]";
 	}
 
 }

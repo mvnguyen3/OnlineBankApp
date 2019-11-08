@@ -30,18 +30,15 @@ public class UserValidator implements Validator {
 //		System.out.println("User: " + user);
 //		System.out.println("UserId: " + userId);
 //		System.out.println("User exist: " + userService.findUserById(userId));
-		if (userId < 0) {
-			errors.rejectValue("userId", "user.userId.exists", "User Id must not be < 0");
-
-		}
+		
 		try {
-			if (!userService.findUserById(userId).equals(null)) {
-				errors.rejectValue("userId", "user.userId.exists", userId + " is already existed !!!");
+			if (userService.findUserById(userId).getUserEmail().equals(user.getUserEmail())) {
+				errors.rejectValue("userEmail", "user.userEmail.exists", user.getUserEmail() + " is already existed !!!");
 			}
-
-			if (!userService.findUserById(userId).equals(null)) {
-				errors.rejectValue("username", "user.username.exists", user.getUsername() + " is already existed");
+			if (userService.findUserById(userId).getUsername().equals(user.getUsername())) {
+				errors.rejectValue("username", "user.username.exists", user.getUsername() + " is already existed !!!");
 			}
+			
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -49,3 +46,25 @@ public class UserValidator implements Validator {
 	}
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

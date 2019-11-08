@@ -10,4 +10,7 @@ public interface UserService {
 	void deleteById(long userId);
 	void updateUser();
 	User findUserById(long userId);
+	long getMaxId();
+	User findUserByEmail(String email);
+	User findByUserName(String username);
 }

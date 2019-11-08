@@ -20,34 +20,61 @@ public class UserServiceImp implements UserService {
 	
 	@Override
 	public User saveUser(User user) {
-		// TODO Auto-generated method stub
 		return userRepository.save(user);
 	}
 
 
 	@Override
 	public List<User> findAll() {
-		// TODO Auto-generated method stub
+
 		return userRepository.findAll();
 	}
 
 
 	@Override
 	public void deleteById(long userId) {	
-		userRepository.deleteByUserId(userId);
+		System.out.println("Deleted User Id: " + userId);
+		userRepository.deleteById(userId);
 	}
 	
 	
 
 	@Override
 	public void updateUser() {
-		// TODO Auto-generated method stub
+		
 		
 	
 	}
 
 	public User findUserById(long userId) {			
 		return userRepository.findByUserId(userId);
+	}
+
+
+	@Override
+	public long getMaxId() {
+		
+		return userRepository.getMaxId() + 1L;
+	}
+
+
+	@Override
+	public User findUserByEmail(String email) {
+		try {
+			return userRepository.findUserByEmail(email);
+		}catch(Exception e){
+			e.printStackTrace();
+			return null;
+		}
+		
+	}
+
+
+	@Override
+	public User findByUserName(String username) {
+		
+		System.out.println("User: ***" + userRepository.findByUsername(username));
+		return userRepository.findByUsername(username);
 	}	
 }
 
