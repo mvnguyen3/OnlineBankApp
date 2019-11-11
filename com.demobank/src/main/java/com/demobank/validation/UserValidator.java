@@ -31,6 +31,7 @@ public class UserValidator implements Validator {
 //		System.out.println("UserId: " + userId);
 //		System.out.println("User exist: " + userService.findUserById(userId));
 		
+		// Validate user through email address.
 		try {
 			if (userService.findUserById(userId).getUserEmail().equals(user.getUserEmail())) {
 				errors.rejectValue("userEmail", "user.userEmail.exists", user.getUserEmail() + " is already existed !!!");

@@ -97,12 +97,15 @@ body {
 			<tbody>
 
 				<tr>
+					<% if(session.getAttribute("newUser") != null){ %>
 
-
-					<td><a href="/userForm"><button id="userBtn"
-								class="btn btn-primary">User</button></a></td>
+					<td><td><a href="/"><button id="userBtn"
+									class="btn btn-primary">Login</button></a></td></td>
+					<%} %>
 
 					<sec:authorize access="isAuthenticated()">
+						<td><a href="/userForm"><button id="userBtn"
+									class="btn btn-primary">User</button></a></td>
 
 						<td><a href="/customerForm"><button id="customerBtn"
 									class="btn btn-primary">Customer</button></a></td>
@@ -154,9 +157,16 @@ body {
 							onkeypress="addDashesPhone(this)" /></td>
 					<td><form:errors cssClass="error" path="userMobile" /></td>
 				</tr>
+				<!-- Hide the content if user is Admin  -->
+				<%
+					if (session.getAttribute("Admin") == null) {
+				%>
 				<tr>
 					<td><button class="btn btn-primary" type="submit" value="save">Submit</button></td>
 				</tr>
+				<%
+					}
+				%>
 			</table>
 		</form:form>
 	</div>
@@ -180,9 +190,10 @@ body {
 							<td>${user.userEmail}</td>
 							<td>${user.userMobile}</td>
 							<!-- update button will redirect to a new jsp page -->
-							<td><a
-								href="/updateUser?userId=${user.userId}&username=${user.username}&password=${user.password}&userEmail=${user.userEmail}&userMobile=${user.userMobile}">Update</a>
-								&nbsp; &nbsp; &nbsp; <a href="/deleteUser?userId=${user.userId}">Delete</a>
+							<td>
+								<!-- <a --> <%-- href="/updateUser?userId=${user.userId}&username=${user.username}&password=${user.password}&userEmail=${user.userEmail}&userMobile=${user.userMobile}">Update</a>
+								&nbsp; &nbsp; &nbsp; --%> <a
+								href="/deleteUser?userId=${user.userId}">Delete</a>
 							</td>
 						</tr>
 					</c:forEach>
@@ -194,7 +205,10 @@ body {
 	<%-- <%=session.getAttribute("user") %> --%>
 	<!-- Ternary Operator  -->
 	${status}
-
+	<div>
+		Note Center:
+			- Don't delete user.....
+	</div>
 </body>
 </html>
 

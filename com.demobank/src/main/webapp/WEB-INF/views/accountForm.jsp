@@ -133,7 +133,7 @@ body {
 				<tr>
 					<td>Holder</td>
 					<td><form:input type="text" name="accountHolder"
-							path="accountHolder" /></td>
+							path="accountHolder" value="${holder}" readonly="true"/></td>
 					<td><form:errors cssClass="error" path="accountHolder" /></td>
 				</tr>
 				<tr>
@@ -148,10 +148,11 @@ body {
 							placeholder="$12,000" />
 					<td><form:errors cssClass="error" path="accountBalance" /></td>
 				</tr>
-
+					<!-- Hide the submit button if user is Admin -->
+				<% if(session.getAttribute("Admin") == null){ %>
 				<tr>
 					<td><button class="btn btn-primary" type="submit" value="save">Submit</button></td>
-				</tr>
+				</tr><%} %>
 			</table>
 		</form:form>
 	</div>

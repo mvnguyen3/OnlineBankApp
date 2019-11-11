@@ -23,10 +23,10 @@ body {
 	margin: auto;
 }
 </style>
-<title>Login Form</title>
+<title>Welcome To Mean Bank</title>
 </head>
 <body>
-	<h2>Login Form</h2>
+	<h2>Welcome To Mean Bank</h2>
 	<c:if test="${not empty errorMessage}">
 		${errorMessage}
 	</c:if>

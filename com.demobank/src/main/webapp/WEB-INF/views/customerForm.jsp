@@ -116,7 +116,7 @@ body {
 
 	<!-- If the customer already having a customer account  -->
 	<%
-		if (session.getAttribute("registered") == null) {
+		if (session.getAttribute("registered") == null || session.getAttribute("Admin") != null ) {
 	%>
 	<div class="form-group">
 		<form:form action="saveCustomer" method="post"
@@ -135,7 +135,8 @@ body {
 				<tr>
 					<td>Email</td>
 					<td><form:input type="text" name="customerEmail"
-							value='<%=session.getAttribute("email") %>' path="customerEmail" readonly="true"/></td>
+							value='<%=session.getAttribute("email")%>' path="customerEmail"
+							readonly="true" /></td>
 					<td><form:errors cssClass="error" path="customerEmail" /></td>
 				</tr>
 				<tr>
@@ -168,40 +169,54 @@ body {
 					<td><form:errors cssClass="error" path="customerDob" /></td>
 				</tr>
 
-				<%
-					// Disabling this Button for user login
-					if (session.getAttribute("Admin") == null) {
-				%>
-				
-					<tr>
-						<td><button class="btn btn-primary" type="submit"
-								value="save">Submit</button></td>
-					</tr>
+				<!-- Testing -->
 
-				<%
-					}
-				%>
+				<tr>
+					<td>Line1</td>
+					<td><form:input type="text" name="Address.line1"
+							path="Address.line1" /></td>
+					<td><form:errors cssClass="error" path="Address.line1" /></td>
+				</tr>
+				<tr>
+					<td>Line2</td>
+					<td><form:input type="text" name="Address.line2"
+							path="Address.line2" value="N/A" /></td>
+					<td><form:errors cssClass="error" path="Address.line2" /></td>
+				</tr>
+				<tr>
+					<td>Country</td>
+					<td><form:input type="text" name="Address.country"
+							path="Address.country" value="US" readonly="true" /></td>
+					<td><form:errors cssClass="error" path="Address.country" /></td>
+				</tr>
+				<tr>
+					<td>State</td>
+					<td><form:input type="text" name="Address.state"
+							path="Address.state" value="Illinois" readonly="true" /></td>
+					<td><form:errors cssClass="error" path="Address.state" /></td>
+				</tr>
+				<tr>
+					<td>City</td>
+					<td><form:input type="text" name="Address.city"
+							path="Address.city" /></td>
+					<td><form:errors cssClass="error" path="Address.city" /></td>
+				</tr>
+				<!-- Testing -->
+				<!-- Hide the submit button if user is Admin -->
+				<% if(session.getAttribute("Admin") == null){ %>
+				<tr>
+					<td><button class="btn btn-primary" type="submit" value="save">Submit</button></td>
+				</tr>
+				<%} %>
+
+
 
 			</table>
 		</form:form>
 	</div>
-
-
-	<%
-		} else {
-	%>
-	<div>
-		<h2>The customer is already having an account</h2>
-	</div>
-	<%
-		}
-	%>
-
-
-
-
-
-
+	<%}else{ %>
+	<h2>The customer is already having an account</h2>
+	<%} %>
 
 	<sec:authorize access="hasAuthority('admin')">
 		<c:if test="${not empty customers}">

@@ -8,5 +8,8 @@ public interface AccountService {
 	Account saveAccount(Account account);
 	boolean exist(long id);
 	List<Account> findAllAccount();
-	void deleteAccountById(Long id);
+	void deleteAccountById(long id);
+	void deleteAccountByCusId(long customerId);
+	void saveAccountCustomer(long customerId, long accountId);
+	
 }

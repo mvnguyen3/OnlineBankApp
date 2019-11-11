@@ -26,7 +26,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 //		auth.inMemoryAuthentication().withUser("minh").password(pbkdf2.encode("minh")).roles("Programmer", "Admin");
 //		auth.inMemoryAuthentication().withUser("hailey").password(pbkdf2.encode("hailey")).roles("Programmer", "Admin");
 //		auth.inMemoryAuthentication().withUser("goku").password(pbkdf2.encode("goku")).roles("User", "Programmer");
-		auth.eraseCredentials(false);
 		auth.userDetailsService(userDetailsService).passwordEncoder(pbkdf2);  
 		
 	}

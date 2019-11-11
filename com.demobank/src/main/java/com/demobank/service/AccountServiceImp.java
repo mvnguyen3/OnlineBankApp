@@ -2,6 +2,8 @@ package com.demobank.service;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,6 +11,7 @@ import com.demobank.domain.Account;
 import com.demobank.repository.AccountRepository;
 
 @Service
+@Transactional
 public class AccountServiceImp implements AccountService {
 
 	@Autowired
@@ -33,9 +36,22 @@ public class AccountServiceImp implements AccountService {
 	}
 
 	@Override
-	public void deleteAccountById(Long id) {
-		// TODO Auto-generated method stub
+	public void deleteAccountById(long id) {
+
 		accountRepository.deleteById(id);
+		
+	}
+
+	@Override
+	public void saveAccountCustomer(long customerId, long accountId) {
+		accountRepository.saveAccountCustomer(customerId, accountId);
+		
+	}
+
+
+	@Override
+	public void deleteAccountByCusId(long customerId) {
+		accountRepository.deleteAccountByCusId(customerId);
 		
 	}
 

@@ -66,18 +66,14 @@ public class UserController {
 	@RequestMapping("/userForm")
 	ModelAndView userForm(User user, HttpSession session, Principal pl) {
 		ModelAndView modelAndView = new ModelAndView("userForm");
-		modelAndView.addObject("users", userService.findAll());
-		User currentUser = userService.findByUserName(pl.getName());
-		
+		modelAndView.addObject("users", userService.findAll());		
+
 		// ************ TESTING AREA **************
 //		System.out.println("Name from Pricipal: " + pl.getName());
 //		System.out.println("UserId: " + currentUser.getUserId() + " Link with CustomerId: "
 //				+ roleService.getCustomerId(2L));
-		
+
 		// ***************************************
-		
-		session.setAttribute("user", currentUser);
-		session.setAttribute("Admin", "In session");
 
 //		if (session.getAttribute("inSession") == null) {
 //			System.out.println("*****My user Name: " + user.getUsername());
@@ -88,11 +84,24 @@ public class UserController {
 //			session.setAttribute("inSession", "Not Null");
 //
 //		}
+		try {
+			if (userService.findByUserName(pl.getName()) != null) {
+				User currentUser = userService.findByUserName(pl.getName());
+				System.out.println("Current User: ***Admin***");
+				session.setAttribute("user", currentUser);
+				session.setAttribute("Admin", "In session");
+				session.setAttribute("registered", "Not Null");
+			}
+
+		} catch (NullPointerException e) {
+			System.out.println("New User");
+		}
 
 		try {
+
 			user.setUserId(userService.getMaxId());
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println("Sign Up User");
 		}
 
 		return modelAndView;
@@ -109,7 +118,7 @@ public class UserController {
 	// ************ VIEW HAS OBJECT ***************
 
 	@PostMapping("/saveUserForm")
-	ModelAndView saveForm(@ModelAttribute @Valid User user, BindingResult br) {
+	ModelAndView saveForm(@ModelAttribute @Valid User user, BindingResult br, HttpSession session) {
 		ModelAndView modelAndView = new ModelAndView();
 		System.out.println(userService.findAll());
 		// For Validation
@@ -118,9 +127,9 @@ public class UserController {
 			return userFormView(modelAndView);
 		} else {
 			modelAndView.addObject("status", "Successfully save user");
-
+			session.setAttribute("newUser", "Not Null");
 			user.setPassword(pbkdf2.encode(user.getPassword()));
-			roleService.saveRole(user.getUserId(), 2L);
+			roleService.saveRole(user.getUserId(), 2L); // Auto set the new user to user authority.
 			userService.saveUser(user);
 
 			return userFormView(modelAndView);
@@ -130,17 +139,33 @@ public class UserController {
 
 	// @ModelAttribute user is a need If you go back to the main page.
 	@RequestMapping("/deleteUser")
-	ModelAndView deleteUser(@ModelAttribute User user, @RequestParam long userId) {
+	ModelAndView deleteUser(@ModelAttribute User user, @RequestParam long userId) throws InterruptedException {
 		ModelAndView modelAndView = new ModelAndView();
+
+		try {
+			// ALWAYS DELETE THE CHILD COMPONENT FIRST.
+			// Everything which is linked to this user is also be deleted
+			if (roleService.getCustomerId(userId) != 0) {
+				long customerLinkedId = roleService.getCustomerId(userId); // Linked Id
+				//System.out.println("CustomerLinkedId: " + customerLinkedId);
+				// Delete customer linked
+				customerService.deleteById(customerLinkedId); // Customer Link Delete
+				
+				// Testing
+				// Faster way to delete customer ....
+//				CustomerController cus = new CustomerController();
+//				cus.delete(customer, customerId)
+				
 		
-		// Everything which is linked to this user is also be deleted
-		userService.deleteById(userId); 
-		long customerLinkedId = roleService.getCustomerId(userId);
-		customerService.deleteById(customerLinkedId); // Customer Link Delete
-		
-		
-		
-		modelAndView.addObject("status", "User with id: " + userId + " has been deleted");
+				
+			}
+			Thread.sleep(500);
+			userService.deleteById(userId);
+			modelAndView.addObject("status", "User with id: " + userId + " has been deleted");
+
+		} catch (Exception e) {
+			System.out.println("Null Pointer Exception");
+		}
 
 		return userFormView(modelAndView);
 	}
@@ -197,8 +222,7 @@ public class UserController {
 	public ModelAndView logToApp(@RequestParam(value = "error", required = false) String error,
 			@RequestParam(value = "logout", required = false) String logout, HttpServletRequest req,
 			HttpServletResponse res, Model model, HttpSession session) {
-		ModelAndView modelAndView = new ModelAndView("login");
-
+		ModelAndView modelAndView = new ModelAndView("login");		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String errorMessage = null;
 		if (error != null) {
@@ -214,8 +238,8 @@ public class UserController {
 			if (auth != null) {
 				new SecurityContextLogoutHandler().logout(req, res, auth);
 			}
-			System.out.println("*****auth: " + auth);
-			System.out.println("*****principal: " + SecurityContextHolder.getContext().getAuthentication());
+			//System.out.println("*****auth: " + auth);
+			//System.out.println("*****principal: " + SecurityContextHolder.getContext().getAuthentication());
 
 			// Once logout, session will automatically invalid
 

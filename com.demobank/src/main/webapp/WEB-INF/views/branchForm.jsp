@@ -151,10 +151,12 @@ body {
 					<td><form:errors cssClass="error" path="branchZipcode" /></td>
 				</tr>
 
-
+				<!-- Hide the submit button if user is Admin -->
+				<% if(session.getAttribute("Admin") == null){ %>
 				<tr>
 					<td><button class="btn btn-primary" type="submit" value="save">Submit</button></td>
 				</tr>
+				<%} %>
 			</table>
 		</form:form>
 	</div>

@@ -37,7 +37,7 @@ public class customerRestController {
 	}
 	
 	@PostMapping("deleteCustomer")
-	ResponseEntity<?> delete(@RequestBody long id){
+	ResponseEntity<?> delete(@RequestBody long id) throws InterruptedException{
 		if((service.findById(id)) != null) {			
 			service.deleteById(id);
 			return new ResponseEntity<String>("User with id: " + id + " has been deleted", HttpStatus.OK);

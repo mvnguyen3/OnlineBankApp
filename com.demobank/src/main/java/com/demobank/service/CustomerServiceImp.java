@@ -17,6 +17,9 @@ public class CustomerServiceImp implements CustomerService {
 	@Autowired
 	CustomerRepository repository;
 	
+	@Autowired
+	AccountService accountService;
+	
 	@Override
 	public List<Customer> findAll() {
 		// TODO Auto-generated method stub
@@ -30,13 +33,18 @@ public class CustomerServiceImp implements CustomerService {
 	}
 
 	@Override
-	public void deleteById(long id) {
+	public void deleteById(long id) throws InterruptedException {
 		// TODO Auto-generated method stub
-		repository.deleteUserLink(id);
 		repository.deleteById(id);
+		System.out.println("Deleted Customer Id: " + id);
+		Thread.sleep(500);
+		repository.deleteUserLink(id);
+		System.out.println("Deleted customer_user Link!!!");
 		if(findAll().isEmpty()) {
 			repository.truncate();
-		}
+			System.out.println("Customer schema is empty");
+		}		
+		
 	}
 
 	@Override
