@@ -2,6 +2,7 @@ package com.demobank.controller;
 
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.demobank.domain.Account;
 import com.demobank.domain.Customer;
 import com.demobank.domain.User;
 import com.demobank.service.AccountService;
@@ -36,8 +38,8 @@ public class CustomerController {
 
 	@Autowired
 	UserService userService;
-	
-	@Autowired 
+
+	@Autowired
 	AccountService accountService;
 
 	@Autowired
@@ -57,6 +59,7 @@ public class CustomerController {
 		// ********** If user is not admin **********
 		if (session.getAttribute("Admin") == null) {
 			System.out.println("Name from Pricipal: " + pl.getName());
+			
 
 			// Check if customer is already registered
 			try {
@@ -65,10 +68,10 @@ public class CustomerController {
 				String userEmail = user.getUserEmail();
 				// System.out.println("User Email:" + userEmail);
 				Customer currentCustomer = service.findByEmail(userEmail);
-				
+
 				System.out.println("customer object has been store to the session :)");
 				if (currentCustomer == null) {
-					//System.out.println("Current Customer: " + currentCustomer);
+					// System.out.println("Current Customer: " + currentCustomer);
 					// System.out.println("User is already registered an account");
 					// System.out.println("Customer Email: " + currentCustomer.getCustomerEmail());
 
@@ -138,11 +141,25 @@ public class CustomerController {
 	@RequestMapping("/deleteCustomer")
 	ModelAndView delete(@ModelAttribute Customer customer, @RequestParam long customerId) throws InterruptedException {
 		ModelAndView modelAndView = new ModelAndView();
-		service.deleteById(customerId);
-		// Delete accounts that associate with the customer.
-		accountService.deleteAccountByCusId(customerId);
 
-		modelAndView.addObject("status", "Customer with id: " + customerId + " has been deleted");
+		List<Account> accountsOfCustomer = accountService.findAllByCusId(customerId);
+		boolean balanceExist = false;
+
+		for (Account acc : accountsOfCustomer) {
+			if (acc.getAccountBalance() > 0) {
+				System.out.println(acc.getAccountHolder() + " Has Balance Available: " + acc.getAccountBalance());
+				balanceExist = true;
+			}
+		}
+		if (!balanceExist) {
+			// Delete accounts that associate with the customer.
+			accountService.deleteAccountByCusId(customerId);
+			service.deleteById(customerId);
+
+			modelAndView.addObject("status", "Customer with id: " + customerId + " has been deleted");
+		} else {
+			modelAndView.addObject("status", "Customer with id: " + customerId + " still have some balance on account");
+		}
 
 		return customerFormView(modelAndView);
 	}

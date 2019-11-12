@@ -2,6 +2,7 @@ package com.demobank.controller;
 
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServlet;
@@ -22,8 +23,10 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.demobank.domain.Account;
 import com.demobank.domain.Customer;
 import com.demobank.domain.User;
+import com.demobank.service.AccountService;
 import com.demobank.service.CustomerService;
 import com.demobank.service.RoleService;
 import com.demobank.service.UserService;
@@ -43,8 +46,11 @@ public class UserController {
 	CustomerService customerService;
 
 	@Autowired
-	UserValidator userValidator;
+	AccountService accountService;
 
+	@Autowired
+	UserValidator userValidator;
+ 
 	@Autowired
 	Pbkdf2PasswordEncoder pbkdf2;
 
@@ -66,7 +72,7 @@ public class UserController {
 	@RequestMapping("/userForm")
 	ModelAndView userForm(User user, HttpSession session, Principal pl) {
 		ModelAndView modelAndView = new ModelAndView("userForm");
-		modelAndView.addObject("users", userService.findAll());		
+		modelAndView.addObject("users", userService.findAll());
 
 		// ************ TESTING AREA **************
 //		System.out.println("Name from Pricipal: " + pl.getName());
@@ -143,25 +149,37 @@ public class UserController {
 		ModelAndView modelAndView = new ModelAndView();
 
 		try {
+
 			// ALWAYS DELETE THE CHILD COMPONENT FIRST.
 			// Everything which is linked to this user is also be deleted
 			if (roleService.getCustomerId(userId) != 0) {
-				long customerLinkedId = roleService.getCustomerId(userId); // Linked Id
-				//System.out.println("CustomerLinkedId: " + customerLinkedId);
-				// Delete customer linked
-				customerService.deleteById(customerLinkedId); // Customer Link Delete
-				
-				// Testing
-				// Faster way to delete customer ....
-//				CustomerController cus = new CustomerController();
-//				cus.delete(customer, customerId)
-				
-		
-				
+				long customerLinkedId = roleService.getCustomerId(userId); // customer Id
+				List<Account> accountsOfCustomer = accountService.findAllByCusId(customerLinkedId);
+				boolean balanceExist = false;
+
+				for (Account acc : accountsOfCustomer) {
+					if (acc.getAccountBalance() > 0) {
+						System.out
+								.println(acc.getAccountHolder() + " Has Balance Available: " + acc.getAccountBalance());
+						balanceExist = true;
+					}
+				}
+
+				// If there is no balance on the account. We can delete the user.
+				if (!balanceExist) {
+					accountService.deleteAccountByCusId(customerLinkedId); // Delete accounts that associate with the
+																			// customer.
+					// System.out.println("CustomerLinkedId: " + customerLinkedId);
+					// Delete customer linked
+					customerService.deleteById(customerLinkedId); // Customer Link Delete
+
+					Thread.sleep(500);
+					userService.deleteById(userId);
+					modelAndView.addObject("status", "User with id: " + userId + " has been deleted");
+				} else {
+					modelAndView.addObject("status", "User with id: " + userId + " still has some balance");
+				}
 			}
-			Thread.sleep(500);
-			userService.deleteById(userId);
-			modelAndView.addObject("status", "User with id: " + userId + " has been deleted");
 
 		} catch (Exception e) {
 			System.out.println("Null Pointer Exception");
@@ -222,7 +240,7 @@ public class UserController {
 	public ModelAndView logToApp(@RequestParam(value = "error", required = false) String error,
 			@RequestParam(value = "logout", required = false) String logout, HttpServletRequest req,
 			HttpServletResponse res, Model model, HttpSession session) {
-		ModelAndView modelAndView = new ModelAndView("login");		
+		ModelAndView modelAndView = new ModelAndView("login");
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String errorMessage = null;
 		if (error != null) {
@@ -238,8 +256,9 @@ public class UserController {
 			if (auth != null) {
 				new SecurityContextLogoutHandler().logout(req, res, auth);
 			}
-			//System.out.println("*****auth: " + auth);
-			//System.out.println("*****principal: " + SecurityContextHolder.getContext().getAuthentication());
+			// System.out.println("*****auth: " + auth);
+			// System.out.println("*****principal: " +
+			// SecurityContextHolder.getContext().getAuthentication());
 
 			// Once logout, session will automatically invalid
 

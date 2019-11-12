@@ -97,11 +97,17 @@ body {
 			<tbody>
 
 				<tr>
-					<% if(session.getAttribute("newUser") != null){ %>
+					<%
+						if (session.getAttribute("newUser") != null) {
+					%>
 
-					<td><td><a href="/"><button id="userBtn"
-									class="btn btn-primary">Login</button></a></td></td>
-					<%} %>
+					<td>
+					<td><a href="/"><button id="userBtn"
+								class="btn btn-primary">Login</button></a></td>
+					</td>
+					<%
+						}
+					%>
 
 					<sec:authorize access="isAuthenticated()">
 						<td><a href="/userForm"><button id="userBtn"
@@ -111,6 +117,7 @@ body {
 									class="btn btn-primary">Customer</button></a></td>
 						<td><a href="/accountForm"><button id="accountBtn"
 									class="btn btn-primary">Account</button></a></td>
+						
 						<td><a href="/branchForm"><button id="branchBtn"
 									class="btn btn-primary">Branch</button></a></td>
 					</sec:authorize>
@@ -205,10 +212,10 @@ body {
 	<%-- <%=session.getAttribute("user") %> --%>
 	<!-- Ternary Operator  -->
 	${status}
-	<div>
+	<!-- <div>
 		Note Center:
 			- Don't delete user.....
-	</div>
+	</div> -->
 </body>
 </html>
 

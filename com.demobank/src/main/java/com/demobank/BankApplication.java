@@ -22,16 +22,16 @@ public class BankApplication {
 		// CREATION - Use Email to Link
 		// + User Customer links -- Done
 		// + Customer Account links
-		// + 1 customer can have many Account. // TODO
+		// + 1 customer can have many Account. // done
 //	 	+ When 1 account is created, set the customer object to that account.
 		// + Use session to store customer email, and somehow get the customer object.
-		// + Populate the customer_Account table also.
+		// + Populate the customer_Account table also. 
 
-		// DELETION - TODO Use Id to link
+		// DELETION - Use Id to link
 		// + User Customer links -- Done
-		// + Customer_account links -- TODO
-		// + Once customer is got deleted - also delete the account. -- DONE TODO - If user is delete, Delete everything....
-		// + 
+		// + Customer_account links -- Done
+		// + Once customer is got deleted - also delete the account. -- DONE - If user is delete, Delete everything except the branch
+		// + Creating transaction component -- TODO
 
 		// once Account is created, link it with the current customer Id and the
 		// BranchId

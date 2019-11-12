@@ -44,7 +44,7 @@
 		}
 	} */
 </script>
-<title>Account Form</title>
+<title>Transaction Form</title>
 <style>
 body {
 	background-color: whitesmoke;
@@ -99,11 +99,7 @@ body {
 					<td><a href="/customerForm"><button id="customerBtn"
 								class="btn btn-primary">Customer</button></a></td>
 					<td><a href="/accountForm"><button id="accountBtn"
-								class="btn btn-primary">Account</button></a></td>
-					<sec:authorize access="hasAuthority('admin')">
-						<td><a href="/transactionForm"><button
-									id="transactionBtn" class="btn btn-primary">Transaction</button></a></td>
-					</sec:authorize>
+								class="btn btn-primary">Account</button></a></td>				
 					<td><a href="/branchForm"><button id="branchBtn"
 								class="btn btn-primary">Branch</button></a></td>
 					<sec:authorize access="hasAuthority('user')">
@@ -116,138 +112,86 @@ body {
 		</table>
 	</div>
 
-	<%
-		if (session.getAttribute("registered") != null) {
-	%>
+	<% if(session.getAttribute("registered") != null){ %>
 	<div class="form-group">
-		<form:form action="saveAccount" method="post" modelAttribute="account">
+		<form:form action="saveTransaction" method="post" modelAttribute="transaction">
 
 			<table>
 				<tr>
-					<th align="center" colspan="4">Account Form</th>
+					<th align="center" colspan="4">Transaction</th>
 				</tr>
 				<!-- Only 1 branch is available now -->
 				<tr>
-					<td>Branch Id</td>
-					<td>1</td>
+					<td>Account Id</td>
+					<td><form:input type="text" name="fromAccountNumber"
+							path="fromAccountNumber" value="${fromAccountNumber}" readonly="true" /></td>
+					<td><form:errors cssClass="error" path="fromAccountNumber" /></td>
 				</tr>
 				<tr>
-					<td>Type</td>
-					<td><form:radiobutton name="accountType" path="accountType"
-							value="SAVING" label="Saving" /> <form:radiobutton
-							name="accountType" path="accountType" value="CHECKING"
-							label="Checking" /> <form:radiobutton name="accountType"
-							path="accountType" value="CREDIT" label="Credit" /> <form:radiobutton
-							name="accountType" path="accountType" value="DEBIT" label="Debit" /></td>
-					<td><form:errors cssClass="error" path="accountType" /></td>
+					<td>To Account Id</td>
+					<td><form:input type="text" name="toAccountNumber"
+							path="toAccountNumber"/></td>
+					<td><form:errors cssClass="error" path="toAccountNumber" /></td>
 				</tr>
 				<tr>
-					<td>Holder</td>
-					<td><form:input type="text" name="accountHolder"
-							path="accountHolder" value="${holder}" readonly="true" /></td>
-					<td><form:errors cssClass="error" path="accountHolder" /></td>
+					<td>Message</td>
+					<td><form:input type="text" name="comment" path="comment" /></td>
+					<td><form:errors cssClass="error" path="comment" /></td>
 				</tr>
+				
+				<!-- Auto Set using java -->
+				<%-- <tr>
+					<td>Transaction Date Time</td>
+					<td><form:input type="date" name="transactionDateTime"
+							path="transactionDateTime" /></td>
+					<td><form:errors cssClass="error" path="transactionDateTime" /></td>
+				</tr> --%>
 				<tr>
-					<td>Open Date</td>
-					<td><form:input type="date" name="accountOpenDate"
-							path="accountOpenDate" /></td>
-					<td><form:errors cssClass="error" path="accountOpenDate" /></td>
-				</tr>
-				<tr>
-					<td>Balance</td>
-					<td><form:input name="accountBalance" path="accountBalance"
-							placeholder="$12,000" />
-					<td><form:errors cssClass="error" path="accountBalance" /></td>
+					<td>Transaction Type</td>
+					<td><form:input name="transactionType" path="transactionType"
+							placeholder="QuickPay" value="Quick Pay" readonly="true" />
+					<td><form:errors cssClass="error" path="transactionType" /></td>
 				</tr>
 				<!-- Hide the submit button if user is Admin -->
-				<%
-					if (session.getAttribute("Admin") == null) {
-				%>
+				<% if(session.getAttribute("Admin") == null){ %>
 				<tr>
 					<td><button class="btn btn-primary" type="submit" value="save">Submit</button></td>
 				</tr>
-				<%
-					}
-				%>
+				<%} %>
 			</table>
 		</form:form>
 	</div>
 
-	<%
-		} else {
-	%>
+	<%}else{ %>
 	<div>
 		<h2>Customer Must Register :)</h2>
 	</div>
 
-	<%
-		}
-	%>
-	<p>Need some validation on account deletion </p>
-	<sec:authorize access="hasAuthority('user')">
-		<c:if test="${not empty currentAccounts}">
-			<div style="overflow: auto">
-				<table border="1">
-					<thead>
-						<tr>
-							<th>Id</th>
-							<!-- <th>Cus_Id</th>
-							<th>Bran_Id</th> -->
-							<th>Type</th>
-							<th>Holder</th>
-							<th>Open Date</th>
-							<th>Balance</th>
-							<th>Action</th>
-						<tr>
-					</thead>
-					<c:forEach items="${currentAccounts}" var="account">
-						<tbody>
-							<tr>
-								<td>${account.accountID}</td>
-								<%-- <td>${account.accountCustomers.customerId}</td>
-								<td>${account.accountBranch.branchId}</td> --%>
-								<td>${account.accountType}</td>
-								<td>${account.accountHolder}</td>
-								<td>${account.accountOpenDate}</td>
-								<td>$${account.accountBalance}</td>
-								<td><a
-									href="/transactionForm?fromAccountNumber=${account.accountID}">Transfer
-										To</a></td>
-							</tr>
-						</tbody>
-					</c:forEach>
-				</table>
-			</div>
-		</c:if>
-	</sec:authorize>
+	<%} %>
 
 	<sec:authorize access="hasAuthority('admin')">
-		<c:if test="${not empty accounts}">
+		<c:if test="${not empty transactions}">
 			<div style="overflow: auto">
 				<table border="1">
 					<thead>
 						<tr>
-							<th>Id</th>
-							<th>Cus_Id</th>
-							<th>Bran_Id</th>
-							<th>Type</th>
-							<th>Holder</th>
-							<th>Open Date</th>
-							<th>Balance</th>
+							<td>Account Id</td>
+							<td>To Account Id</td>
+							<td>Message</td>
+							<th>Transaction Date</th>
+							<th>Transaction Type</th>						
 							<th>Action</th>
 						<tr>
 					</thead>
-					<c:forEach items="${accounts}" var="account">
+					<c:forEach items="${transactions}" var="transaction">
 						<tbody>
 							<tr>
-								<td>${account.accountID}</td>
-								<td>${account.accountCustomers.customerId}</td>
-								<td>${account.accountBranch.branchId}</td>
-								<td>${account.accountType}</td>
-								<td>${account.accountHolder}</td>
-								<td>${account.accountOpenDate}</td>
-								<td>$${account.accountBalance}</td>
-								<td><a href="/deleteAccount?accountId=${account.accountID}">Delete</a></td>
+								<td>${transaction.fromAccountNumber}</td>								
+								<td>${transaction.toAccountNumber}</td>
+								<td>${transaction.comment}</td>
+								<td>${transaction.transactionDateTime}</td>
+								<td>${transaction.transactionType}</td>
+								<td><a href="/deleteTransaction?toAccountNumber=${transaction.toAccountNumber}">Delete</a></td>
 							</tr>
 						</tbody>
 					</c:forEach>
@@ -257,7 +201,6 @@ body {
 	</sec:authorize>
 
 	${status}
-
 
 </body>
 </html>
@@ -310,3 +253,5 @@ body {
 
 
 
+
+</html>

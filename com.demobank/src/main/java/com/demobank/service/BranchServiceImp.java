@@ -21,25 +21,31 @@ public class BranchServiceImp implements BranchService {
 
 	@Override
 	public boolean exist(Branch branch) {
-		// TODO Auto-generated method stub
+
 		return branchRepository.existsById(branch.getBranchId());
 	}
 
 	@Override
 	public boolean existById(long branchId) {
-		// TODO Auto-generated method stub
+		
 		return branchRepository.existsById(branchId);
 	}
 
 	@Override
 	public void deleteById(long branchId) {
-		// TODO Auto-generated method stub
+		
 		branchRepository.deleteById(branchId);
 	}
 	
 	@Override
 	public List<Branch> findAllBranch() {
 	return branchRepository.findAll();
+	}
+
+	@Override
+	public Branch findById(long id) {
+		
+		return branchRepository.findById(id).get();
 	}
 
 }

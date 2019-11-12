@@ -55,4 +55,10 @@ public class AccountServiceImp implements AccountService {
 		
 	}
 
+	@Override
+	public List<Account> findAllByCusId(long customerLinkedId) {
+		
+		return accountRepository.findAllByCusId(customerLinkedId);
+	}
+
 }
