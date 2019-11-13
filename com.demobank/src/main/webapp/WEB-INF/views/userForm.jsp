@@ -8,8 +8,11 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<link rel="stylesheet"
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<!-- <link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"> -->
+<link type="text/css" rel="stylesheet"
+	href="<c:url value='css/bootstrap.min.css'></c:url>">
+
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script
@@ -117,7 +120,7 @@ body {
 									class="btn btn-primary">Customer</button></a></td>
 						<td><a href="/accountForm"><button id="accountBtn"
 									class="btn btn-primary">Account</button></a></td>
-						
+
 						<td><a href="/branchForm"><button id="branchBtn"
 									class="btn btn-primary">Branch</button></a></td>
 					</sec:authorize>
@@ -202,6 +205,10 @@ body {
 								&nbsp; &nbsp; &nbsp; --%> <a
 								href="/deleteUser?userId=${user.userId}">Delete</a>
 							</td>
+
+
+
+
 						</tr>
 					</c:forEach>
 
@@ -211,7 +218,11 @@ body {
 	</sec:authorize>
 	<%-- <%=session.getAttribute("user") %> --%>
 	<!-- Ternary Operator  -->
+	<c:if test="${not empty status}">
+		<img style="border-radius: 50%" src="images/zeno_customer.jpg"
+			alt="Ultra Instict Goku" width="150" height="150" />
 	${status}
+	</c:if>
 	<!-- <div>
 		Note Center:
 			- Don't delete user.....

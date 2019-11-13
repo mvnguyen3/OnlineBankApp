@@ -27,6 +27,7 @@ import com.demobank.domain.Customer;
 import com.demobank.domain.User;
 import com.demobank.service.AccountService;
 import com.demobank.service.CustomerService;
+import com.demobank.service.TransactionService;
 import com.demobank.service.UserService;
 import com.demobank.validation.CustomerValidator;
 
@@ -41,6 +42,9 @@ public class CustomerController {
 
 	@Autowired
 	AccountService accountService;
+
+	@Autowired
+	TransactionService tranService;
 
 	@Autowired
 	CustomerValidator customervalidator;
@@ -59,7 +63,6 @@ public class CustomerController {
 		// ********** If user is not admin **********
 		if (session.getAttribute("Admin") == null) {
 			System.out.println("Name from Pricipal: " + pl.getName());
-			
 
 			// Check if customer is already registered
 			try {
@@ -77,6 +80,7 @@ public class CustomerController {
 
 				}
 				System.out.println("From Customer Controller*** Current Customer: " + currentCustomer);
+				session.setAttribute("email", user.getUserEmail());
 				session.setAttribute("customer", currentCustomer);
 				session.setAttribute("registered", currentCustomer.getCustomerEmail());
 				session.setAttribute("user", currentCustomer);
@@ -143,22 +147,35 @@ public class CustomerController {
 		ModelAndView modelAndView = new ModelAndView();
 
 		List<Account> accountsOfCustomer = accountService.findAllByCusId(customerId);
-		boolean balanceExist = false;
+		boolean balanceExist = false, transactionExist = false;
 
+		// Find all balance from account
 		for (Account acc : accountsOfCustomer) {
 			if (acc.getAccountBalance() > 0) {
 				System.out.println(acc.getAccountHolder() + " Has Balance Available: " + acc.getAccountBalance());
 				balanceExist = true;
 			}
 		}
-		if (!balanceExist) {
+
+		// Find transaction from each account;
+		for (Account acc : accountsOfCustomer) {
+			if (!tranService.findByFromAccNumber(acc.getAccountID()).isEmpty()) {
+				System.out.println(acc.getAccountHolder() + " Has transaction Available: "
+						+ tranService.findByFromAccNumber(acc.getAccountID()));
+				transactionExist = true;
+			}
+		}
+
+		if (!balanceExist && !transactionExist) {
 			// Delete accounts that associate with the customer.
 			accountService.deleteAccountByCusId(customerId);
 			service.deleteById(customerId);
 
 			modelAndView.addObject("status", "Customer with id: " + customerId + " has been deleted");
 		} else {
-			modelAndView.addObject("status", "Customer with id: " + customerId + " still have some balance on account");
+			modelAndView.addObject("status",
+					"Customer with id: " + customerId + " still have some balances and transactions");
+
 		}
 
 		return customerFormView(modelAndView);

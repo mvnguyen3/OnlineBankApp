@@ -18,6 +18,8 @@ public class BankApplication {
 		// Problem
 		// When delete user, customer record didn't get delete but it works when delete
 		// on customer page. // Solved
+		//
+		
 
 		// CREATION - Use Email to Link
 		// + User Customer links -- Done
@@ -30,20 +32,16 @@ public class BankApplication {
 		// DELETION - Use Id to link
 		// + User Customer links -- Done
 		// + Customer_account links -- Done
-		// + Once customer is got deleted - also delete the account. -- DONE - If user is delete, Delete everything except the branch
-		// + Creating transaction component -- TODO
+		// + If user is delete, Delete everything except the branch
+		// + Once customer is got deleted - also delete the account. -- DONE - 
+		// 
+		// + Creating transaction component -- Done
+		// 		+ Prevent deletion from user, customer, account, if there is some transaction between account and some account balance... -DONE
 
 		// once Account is created, link it with the current customer Id and the
 		// BranchId
 
-		// Once the user is deleted, every link should be deleted it also
-		// Once the customer is deleted, Account, and Branch associate with that Id also
-		// should be deleted.
-		// Once the account is deleted, the branch associate with that account should be
-		// also deleted.
 
-		// 1 user can have 1 account.
-		// 1 customer can have many account.
 
 	}
 

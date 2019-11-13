@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
@@ -45,6 +46,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 		http.httpBasic();
 	}
 	
+	public void configure(WebSecurity web) {
+		// Have to be inside the resource/static folder
+		web.ignoring().antMatchers("/css/*");
+		web.ignoring().antMatchers("/images/*");
+	}
 	
 	
 	@Bean

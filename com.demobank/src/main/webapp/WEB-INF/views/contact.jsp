@@ -8,10 +8,14 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<link rel="stylesheet"
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<link type="text/css" rel="stylesheet"
+	href="<c:url value='css/bootstrap.min.css'></c:url>">
+<!-- <link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"> -->
 <script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js">
+	
+</script>
 <script
 	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script
@@ -121,8 +125,10 @@ body {
 				</tr>
 
 				<tr>
-					<td>Email:</td>		
-					<td><input name="email" value='<%=session.getAttribute("email") %>' readonly="readonly"/> </td>
+					<td>Email:</td>
+					<td><input name="email"
+						value='<%=session.getAttribute("email")%>' readonly="readonly" />
+					</td>
 				</tr>
 
 
@@ -137,7 +143,11 @@ body {
 				</tr>
 			</table>
 		</form>
-		${status}
+		<c:if test="${not empty status}">
+			<img style="border-radius: 50%" src="images/zeno_customer.jpg"
+		alt="Ultra Instict Goku" width="150" height="150" />
+	${status}
+	</c:if>
 	</div>
 
 

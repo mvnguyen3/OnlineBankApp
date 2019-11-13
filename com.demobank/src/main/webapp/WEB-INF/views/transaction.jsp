@@ -7,9 +7,12 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 <meta charset="UTF-8">
-<link rel="stylesheet"
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<link type="text/css" rel="stylesheet"
+	href="<c:url value='css/bootstrap.min.css'></c:url>">
+<!-- <link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"> -->
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script
@@ -99,7 +102,7 @@ body {
 					<td><a href="/customerForm"><button id="customerBtn"
 								class="btn btn-primary">Customer</button></a></td>
 					<td><a href="/accountForm"><button id="accountBtn"
-								class="btn btn-primary">Account</button></a></td>				
+								class="btn btn-primary">Account</button></a></td>
 					<td><a href="/branchForm"><button id="branchBtn"
 								class="btn btn-primary">Branch</button></a></td>
 					<sec:authorize access="hasAuthority('user')">
@@ -114,7 +117,8 @@ body {
 
 	<% if(session.getAttribute("registered") != null){ %>
 	<div class="form-group">
-		<form:form action="saveTransaction" method="post" modelAttribute="transaction">
+		<form:form action="saveTransaction" method="post"
+			modelAttribute="transaction">
 
 			<table>
 				<tr>
@@ -124,13 +128,14 @@ body {
 				<tr>
 					<td>Account Id</td>
 					<td><form:input type="text" name="fromAccountNumber"
-							path="fromAccountNumber" value="${fromAccountNumber}" readonly="true" /></td>
+							path="fromAccountNumber" value="${fromAccountNumber}"
+							readonly="true" /></td>
 					<td><form:errors cssClass="error" path="fromAccountNumber" /></td>
 				</tr>
 				<tr>
 					<td>To Account Id</td>
 					<td><form:input type="text" name="toAccountNumber"
-							path="toAccountNumber"/></td>
+							path="toAccountNumber" /></td>
 					<td><form:errors cssClass="error" path="toAccountNumber" /></td>
 				</tr>
 				<tr>
@@ -138,7 +143,7 @@ body {
 					<td><form:input type="text" name="comment" path="comment" /></td>
 					<td><form:errors cssClass="error" path="comment" /></td>
 				</tr>
-				
+
 				<!-- Auto Set using java -->
 				<%-- <tr>
 					<td>Transaction Date Time</td>
@@ -179,19 +184,20 @@ body {
 							<td>To Account Id</td>
 							<td>Message</td>
 							<th>Transaction Date</th>
-							<th>Transaction Type</th>						
+							<th>Transaction Type</th>
 							<th>Action</th>
 						<tr>
 					</thead>
 					<c:forEach items="${transactions}" var="transaction">
 						<tbody>
 							<tr>
-								<td>${transaction.fromAccountNumber}</td>								
+								<td>${transaction.fromAccountNumber}</td>
 								<td>${transaction.toAccountNumber}</td>
 								<td>${transaction.comment}</td>
 								<td>${transaction.transactionDateTime}</td>
 								<td>${transaction.transactionType}</td>
-								<td><a href="/deleteTransaction?toAccountNumber=${transaction.toAccountNumber}">Delete</a></td>
+								<td><a
+									href="/deleteTransaction?toAccountNumber=${transaction.toAccountNumber}">Delete</a></td>
 							</tr>
 						</tbody>
 					</c:forEach>
@@ -199,8 +205,12 @@ body {
 			</div>
 		</c:if>
 	</sec:authorize>
-
+	<c:if test="${not empty status}">
+		<img style="border-radius: 50%" src="images/zeno_customer.jpg"
+		alt="Ultra Instict Goku" width="150" height="150" />
 	${status}
+	</c:if>
+
 
 </body>
 </html>

@@ -25,10 +25,12 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.demobank.domain.Account;
 import com.demobank.domain.Customer;
+import com.demobank.domain.Transaction;
 import com.demobank.domain.User;
 import com.demobank.service.AccountService;
 import com.demobank.service.CustomerService;
 import com.demobank.service.RoleService;
+import com.demobank.service.TransactionService;
 import com.demobank.service.UserService;
 import com.demobank.validation.UserValidator;
 
@@ -49,8 +51,11 @@ public class UserController {
 	AccountService accountService;
 
 	@Autowired
+	TransactionService tranService;
+
+	@Autowired
 	UserValidator userValidator;
- 
+
 	@Autowired
 	Pbkdf2PasswordEncoder pbkdf2;
 
@@ -155,7 +160,7 @@ public class UserController {
 			if (roleService.getCustomerId(userId) != 0) {
 				long customerLinkedId = roleService.getCustomerId(userId); // customer Id
 				List<Account> accountsOfCustomer = accountService.findAllByCusId(customerLinkedId);
-				boolean balanceExist = false;
+				boolean balanceExist = false, transactionExist = false;
 
 				for (Account acc : accountsOfCustomer) {
 					if (acc.getAccountBalance() > 0) {
@@ -165,8 +170,18 @@ public class UserController {
 					}
 				}
 
-				// If there is no balance on the account. We can delete the user.
-				if (!balanceExist) {
+				// Find transaction from each account;
+				for (Account acc : accountsOfCustomer) {
+					if (!tranService.findByFromAccNumber(acc.getAccountID()).isEmpty()) {
+						System.out.println(acc.getAccountHolder() + " Has transaction Available: "
+								+ tranService.findByFromAccNumber(acc.getAccountID()));
+						transactionExist = true;
+					}
+				}
+
+				// If there is no balance and transaction on the account. We can delete the
+				// user.
+				if (!balanceExist && !transactionExist) {
 					accountService.deleteAccountByCusId(customerLinkedId); // Delete accounts that associate with the
 																			// customer.
 					// System.out.println("CustomerLinkedId: " + customerLinkedId);
@@ -177,8 +192,13 @@ public class UserController {
 					userService.deleteById(userId);
 					modelAndView.addObject("status", "User with id: " + userId + " has been deleted");
 				} else {
-					modelAndView.addObject("status", "User with id: " + userId + " still has some balance");
+					modelAndView.addObject("status",
+							"User with id: " + userId + " still has some balance and transactions");
 				}
+				// If there is no link customer...
+			}else {
+				userService.deleteById(userId);
+				modelAndView.addObject("status", "User with id: " + userId + " has been deleted");
 			}
 
 		} catch (Exception e) {

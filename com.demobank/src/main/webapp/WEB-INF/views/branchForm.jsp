@@ -8,8 +8,10 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<link rel="stylesheet"
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<link type="text/css" rel="stylesheet"
+	href="<c:url value='css/bootstrap.min.css'></c:url>">
+<!-- <link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"> -->
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script
@@ -111,7 +113,10 @@ body {
 		</table>
 	</div>
 
-	<% if(session.getAttribute("registered") != null){ %>
+
+	<%
+		if (session.getAttribute("registered") != null) {
+	%>
 	<div class="form-group">
 		<form:form action="saveBranch" method="post" modelAttribute="branch">
 
@@ -152,50 +157,61 @@ body {
 				</tr>
 
 				<!-- Allow for admin uses -->
-				<% if(session.getAttribute("Admin") != null){ %>
+				<%
+					if (session.getAttribute("Admin") != null) {
+				%>
 				<tr>
 					<td><button class="btn btn-primary" type="submit" value="save">Submit</button></td>
 				</tr>
-				<%} %>
+				<%
+					}
+				%>
 			</table>
 		</form:form>
 	</div>
-	<%}else{ %>
-		<div>
-			<h2>Customer Must Register :)</h2>
+
+	<%
+		} else {
+	%>
+
+	<div>
+		<h2>Customer Must Register :)</h2>
+	</div>
+	<%
+		}
+	%>
+
+
+	<c:if test="${not empty branches}">
+		<div style="overflow: auto">
+			<table border="1">
+				<thead>
+					<tr>
+						<th>Id</th>
+						<th>Country</th>
+						<th>State</th>
+						<th>City</th>
+						<th>Zipcode</th>
+						<!-- <th>Action</th> -->
+					<tr>
+				</thead>
+				<c:forEach items="${branches}" var="branch">
+					<tbody>
+						<tr>
+							<td>${branch.branchId}</td>
+							<td>${branch.branchCountry}</td>
+							<td>${branch.branchState}</td>
+							<td>${branch.branchCity}</td>
+							<td>${branch.branchZipcode}</td>
+							<%-- <td><a href="/deleteBranch?branchId=${branch.branchId}">Delete</a> --%>
+							</td>
+						</tr>
+					</tbody>
+				</c:forEach>
+			</table>
 		</div>
-	<%} %>
-	<sec:authorize access="hasAuthority('admin')">
-		<c:if test="${not empty branches}">
-			<div style="overflow: auto">
-				<table border="1">
-					<thead>
-						<tr>
-							<th>Id</th>
-							<th>Country</th>
-							<th>State</th>
-							<th>City</th>
-							<th>Zipcode</th>
-							<th>Action</th>
-						<tr>
-					</thead>
-					<c:forEach items="${branches}" var="branch">
-						<tbody>
-							<tr>
-								<td>${branch.branchId}</td>
-								<td>${branch.branchCountry}</td>
-								<td>${branch.branchState}</td>
-								<td>${branch.branchCity}</td>
-								<td>${branch.branchZipcode}</td>
-								<td><a href="/deleteBranch?branchId=${branch.branchId}">Delete</a>
-								</td>
-							</tr>
-						</tbody>
-					</c:forEach>
-				</table>
-			</div>
-		</c:if>
-	</sec:authorize>
+	</c:if>
+
 
 	${status}
 

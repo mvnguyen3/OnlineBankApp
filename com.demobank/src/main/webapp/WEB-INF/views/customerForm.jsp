@@ -8,8 +8,10 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<link rel="stylesheet"
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<link type="text/css" rel="stylesheet"
+	href="<c:url value='css/bootstrap.min.css'></c:url>">
+<!-- <link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"> -->
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script
@@ -116,7 +118,7 @@ body {
 
 	<!-- If the customer already having a customer account  -->
 	<%
-		if (session.getAttribute("registered") == null || session.getAttribute("Admin") != null ) {
+		if (session.getAttribute("registered") == null || session.getAttribute("Admin") != null) {
 	%>
 	<div class="form-group">
 		<form:form action="saveCustomer" method="post"
@@ -203,20 +205,34 @@ body {
 				</tr>
 				<!-- Testing -->
 				<!-- Hide the submit button if user is Admin -->
-				<% if(session.getAttribute("Admin") == null){ %>
+				<%
+					if (session.getAttribute("Admin") == null) {
+				%>
 				<tr>
 					<td><button class="btn btn-primary" type="submit" value="save">Submit</button></td>
 				</tr>
-				<%} %>
+				<%
+					}
+				%>
 
 
 
 			</table>
 		</form:form>
 	</div>
-	<%}else{ %>
-	<h2>The customer is already having an account</h2>
-	<%} %>
+	<%
+		} else {
+	%>
+
+
+	<img style="border-radius: 50%" src="images/zeno_customer.jpg"
+		alt="Ultra Instict Goku" width="150" height="150" />
+	<h3>Zeno said:</h3>
+	<p>The customer is already having an account</p>
+
+	<%
+		}
+	%>
 
 	<sec:authorize access="hasAuthority('admin')">
 		<c:if test="${not empty customers}">
@@ -261,7 +277,11 @@ body {
 	</sec:authorize>
 	<%-- <%=session.getAttribute("user")%> --%>
 
+	<c:if test="${not empty status}">
+		<img style="border-radius: 50%" src="images/zeno_customer.jpg"
+		alt="Ultra Instict Goku" width="150" height="150" />
 	${status}
+	</c:if>
 
 </body>
 </html>

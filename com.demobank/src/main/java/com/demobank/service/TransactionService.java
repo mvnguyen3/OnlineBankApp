@@ -7,5 +7,6 @@ import com.demobank.domain.Transaction;
 public interface TransactionService {
 	void save(Transaction transaction); // Assumed transaction object is always be valid
 	List<Transaction> findAll();
-	void deleteByIdfix(long ToAccountNumber);
+	void deleteByIdfix(long toAccountNumber);
+	List<Transaction> findByFromAccNumber(long accountId);
 }

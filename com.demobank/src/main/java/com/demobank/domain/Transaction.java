@@ -34,15 +34,11 @@ public class Transaction {
 	@ManyToMany(mappedBy = "accountTransactions", fetch = FetchType.LAZY)
 	private Set<Account> transactionAccounts = new HashSet<>();
 
-	
-	
 	// Default Constructor
 	public Transaction() {
 		// TODO Auto-generated constructor stub
 	}
 
-	
-	
 	// Getter and Setter
 	public long getTransactionId() {
 		return transactionId;
@@ -100,4 +96,11 @@ public class Transaction {
 		this.transactionAccounts = transactionAccounts;
 	}
 
+	@Override
+	public String toString() {
+		return "Transaction [transactionId=" + transactionId + ", fromAccountNumber=" + fromAccountNumber
+				+ ", toAccountNumber=" + toAccountNumber + ", comment=" + comment + ", transactionDateTime="
+				+ transactionDateTime + ", transactionType=" + transactionType + ", transactionAccounts="
+				+ transactionAccounts + "]";
+	}
 }

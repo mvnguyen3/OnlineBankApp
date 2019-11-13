@@ -12,8 +12,10 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<link rel="stylesheet"
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<link type="text/css" rel="stylesheet"
+	href="<c:url value='css/bootstrap.min.css'></c:url>">
+<!-- <link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"> -->
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script
@@ -39,9 +41,9 @@ body {
 		<!-- Use to check the role of the user -->
 	<p>${pageContext.request.userPrincipal}</p> --%>
 
-	
 
-<%-- 
+
+	<%-- 
 	<sec:authorize access="isAuthenticated()">
 		<sec:authentication property="principal.authorities" />
 	</sec:authorize> --%>
@@ -51,17 +53,27 @@ body {
 		<sec:authentication property="authorities[0]" />
 	</div> --%>
 
-	
+
 
 	<div>
 		<sec:authorize access="hasAuthority('admin')">
 			<p>
 				Welcome <b>${pageContext.request.userPrincipal.name}</b>
 			<p>
-			<p>
-				<%-- <a href="/userForm?username=${pageContext.request.userPrincipal.name}">User Form</a> --%>
+				<%-- <p>
+				<a href="/userForm?username=${pageContext.request.userPrincipal.name}">User Form</a>
 				<a href="/userForm">User Form</a>
-			</p>
+			</p> --%>
+			<div>
+				<p>
+					<a style="text-decoration: none" href="/userForm"> <img
+						style="border-radius: 50%" src="images/goku.jpg"
+						alt="Ultra Instict Goku" width="120" height="180" /> Click Me :)
+					</a>
+				</p>
+
+
+			</div>
 		</sec:authorize>
 	</div>
 
@@ -69,13 +81,25 @@ body {
 		<sec:authorize access="hasAuthority('user')">
 			<p>
 				Welcome <b>${pageContext.request.userPrincipal.name}</b>
-			<p>
-				<%-- <a href="/customerForm?customerName=${pageContext.request.userPrincipal.name}">Customer Form</a> --%>
+				<%-- <p>
+				<a href="/customerForm?customerName=${pageContext.request.userPrincipal.name}">Customer Form</a>
 				<a href="/customerForm">Customer Form</a>
-			</p>
+			</p> --%>
+			<div>
+				<p>
+					<a style="text-decoration: none" href="/customerForm"> <img
+						style="border-radius: 50%" src="images/zeno.jpg"
+						alt="Ultra Instict Goku" width="150" height="150" /> Click Me :)
+					</a>
+				</p>
+
+
+			</div>
+
 
 		</sec:authorize>
 	</div>
+
 </body>
 </html>
 

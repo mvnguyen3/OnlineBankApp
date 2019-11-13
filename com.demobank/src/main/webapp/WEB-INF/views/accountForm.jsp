@@ -8,8 +8,10 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<link rel="stylesheet"
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<link type="text/css" rel="stylesheet"
+	href="<c:url value='css/bootstrap.min.css'></c:url>">
+<!-- <link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"> -->
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script
@@ -183,7 +185,6 @@ body {
 	<%
 		}
 	%>
-	<p>Need some validation on account deletion </p>
 	<sec:authorize access="hasAuthority('user')">
 		<c:if test="${not empty currentAccounts}">
 			<div style="overflow: auto">
@@ -256,7 +257,11 @@ body {
 		</c:if>
 	</sec:authorize>
 
+	<c:if test="${not empty status}">
+		<img style="border-radius: 50%" src="images/zeno_customer.jpg"
+		alt="Ultra Instict Goku" width="150" height="150" />
 	${status}
+	</c:if>
 
 
 </body>

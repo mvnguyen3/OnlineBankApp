@@ -29,9 +29,14 @@ public class TransactionServiceImpl implements TransactionService {
 	}
 
 	@Override
-	public void deleteByIdfix(long ToAccountNumber) {
-		repository.deleteByIdfix(ToAccountNumber);
+	public void deleteByIdfix(long toAccountNumber) {
+		repository.deleteByIdfix(toAccountNumber);
 		
+	}
+
+	@Override
+	public List<Transaction> findByFromAccNumber(long accountId) {		
+		return repository.findByFromAccNumber(accountId);
 	}
 
 }
