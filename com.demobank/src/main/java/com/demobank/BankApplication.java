@@ -18,7 +18,7 @@ public class BankApplication {
 		// Problem
 		// When delete user, customer record didn't get delete but it works when delete
 		// on customer page. // Solved
-		//
+		//awdawd
 		
 
 		// CREATION - Use Email to Link
