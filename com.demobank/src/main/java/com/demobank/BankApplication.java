@@ -28,7 +28,7 @@ public class BankApplication {
 //	 	+ When 1 account is created, set the customer object to that account.
 		// + Use session to store customer email, and somehow get the customer object.
 		// + Populate the customer_Account table also. 
-
+// afaswef
 		// DELETION - Use Id to link
 		// + User Customer links -- Done
 		// + Customer_account links -- Done
