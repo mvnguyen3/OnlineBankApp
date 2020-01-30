@@ -94,7 +94,7 @@ body {
 			<tbody>
 				<tr>
 					<!-- For Admin use only  -->
-					<sec:authorize access="hasAuthority('admin')">
+					<sec:authorize access="hasAuthority('admin') || hasRole('Admin')">
 						<td><a href="/userForm"><button id="userBtn"
 									class="btn btn-primary">User</button></a></td>
 					</sec:authorize>
@@ -174,7 +174,7 @@ body {
 
 	<%} %>
 
-	<sec:authorize access="hasAuthority('admin')">
+	<sec:authorize access="hasAuthority('admin') || hasRole('Admin')" >
 		<c:if test="${not empty transactions}">
 			<div style="overflow: auto">
 				<table border="1">

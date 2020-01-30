@@ -2,13 +2,25 @@ package com.demobank;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 @SpringBootApplication
-public class BankApplication {
+public class BankApplication extends SpringBootServletInitializer{
 
 	public static void main(String[] args) {
 		SpringApplication.run(BankApplication.class, args);
-
+		
+		
+		//TODO
+		/*
+		 * When deleting a user, must check if customer is there.
+		 * Apache Tomcat 8.5.50 	
+		 * */
+		 
+		// To host to Tomcat 8.5
+		// + Remove embedded Tomcat in spring
+		// + extends SpringBootServletInitializer..
+		
 		// Implement next
 		// Done
 		// + if customer doesn't registered yet, disable all the other features
@@ -28,7 +40,7 @@ public class BankApplication {
 //	 	+ When 1 account is created, set the customer object to that account.
 		// + Use session to store customer email, and somehow get the customer object.
 		// + Populate the customer_Account table also. 
-// afaswef
+
 		// DELETION - Use Id to link
 		// + User Customer links -- Done
 		// + Customer_account links -- Done
@@ -44,5 +56,5 @@ public class BankApplication {
 
 
 	}
-
+	
 }

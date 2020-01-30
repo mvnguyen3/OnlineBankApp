@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
-@Entity
+@Entity(name="role")
 public class Role {
 
 	@Id

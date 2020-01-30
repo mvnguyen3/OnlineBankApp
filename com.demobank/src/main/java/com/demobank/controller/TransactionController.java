@@ -25,13 +25,14 @@ import org.springframework.web.servlet.ModelAndView;
 import com.demobank.domain.Account;
 import com.demobank.domain.Transaction;
 import com.demobank.service.TransactionService;
+import com.demobank.service.UnifiedService;
 import com.demobank.validation.TransactionValidator;
 
 @Controller
 public class TransactionController {
 
 	@Autowired
-	TransactionService service;
+	UnifiedService service;
 
 	@Autowired
 	TransactionValidator validator;
@@ -44,7 +45,7 @@ public class TransactionController {
 	@RequestMapping("/transactionForm")
 	ModelAndView welcome(Transaction transaction, HttpSession session) {
 		ModelAndView model = new ModelAndView("/transaction");
-		model.addObject("transactions",service.findAll());
+		model.addObject("transactions",service.findAllTransactions());
 		model.addObject("fromAccountNumber", transaction.getFromAccountNumber());
 
 		return model;
@@ -54,7 +55,7 @@ public class TransactionController {
 	// Set back the View Which contains all the Object
 	ModelAndView transactionFormView(ModelAndView modelAndView) {
 		modelAndView.setViewName("transaction");
-			modelAndView.addObject("transactions", service.findAll());
+			modelAndView.addObject("transactions", service.findAllTransactions());
 
 		return modelAndView;
 	}
@@ -73,7 +74,7 @@ public class TransactionController {
 			Date date = Date.from(instant);
 			transaction.setTransactionDateTime(date);
 
-			service.save(transaction);
+			service.saveTransaction(transaction);
 			modelAndView.addObject("status", "Successfully save transaction");
 		}
 
@@ -84,8 +85,9 @@ public class TransactionController {
 	@RequestMapping("/deleteTransaction")
 	ModelAndView delete(@ModelAttribute Transaction transaction, @RequestParam long toAccountNumber) {
 		ModelAndView modelAndView = new ModelAndView();
-		service.deleteByIdfix(toAccountNumber);
+		service.deleteTransactionByIdfix(toAccountNumber);
 		modelAndView.addObject("status", "Transaction to id: " + toAccountNumber + " has been deleted");
+		System.out.println("Deleted transaction id: " + toAccountNumber);
 
 		return transactionFormView(modelAndView);
 	}

@@ -28,6 +28,7 @@ import com.demobank.domain.User;
 import com.demobank.service.AccountService;
 import com.demobank.service.CustomerService;
 import com.demobank.service.TransactionService;
+import com.demobank.service.UnifiedService;
 import com.demobank.service.UserService;
 import com.demobank.validation.CustomerValidator;
 
@@ -35,16 +36,7 @@ import com.demobank.validation.CustomerValidator;
 public class CustomerController {
 
 	@Autowired
-	CustomerService service;
-
-	@Autowired
-	UserService userService;
-
-	@Autowired
-	AccountService accountService;
-
-	@Autowired
-	TransactionService tranService;
+	UnifiedService service;
 
 	@Autowired
 	CustomerValidator customervalidator;
@@ -57,7 +49,7 @@ public class CustomerController {
 	@RequestMapping("/customerForm")
 	ModelAndView customerForm(Customer customer, HttpSession session, Principal pl) {
 		ModelAndView modelAndView = new ModelAndView("customerForm");
-		modelAndView.addObject("customers", service.findAll());
+		modelAndView.addObject("customers", service.findAllCustomer());
 		// System.out.println("Customer: " + service.findAll());
 
 		// ********** If user is not admin **********
@@ -67,28 +59,23 @@ public class CustomerController {
 			// Check if customer is already registered
 			try {
 				// check by using useremail.
-				User user = userService.findByUserName(pl.getName());
+				User user = service.findByUserName(pl.getName());
 				String userEmail = user.getUserEmail();
 				// System.out.println("User Email:" + userEmail);
-				Customer currentCustomer = service.findByEmail(userEmail);
+				Customer currentCustomer = service.findCustomerByEmail(userEmail);
 
-				System.out.println("customer object has been store to the session :)");
-				if (currentCustomer == null) {
-					// System.out.println("Current Customer: " + currentCustomer);
-					// System.out.println("User is already registered an account");
-					// System.out.println("Customer Email: " + currentCustomer.getCustomerEmail());
-
-				}
-				System.out.println("From Customer Controller*** Current Customer: " + currentCustomer);
 				session.setAttribute("email", user.getUserEmail());
 				session.setAttribute("customer", currentCustomer);
+				System.out.println("customer object has been store to the session :)");
+
+				System.out.println("From Customer Controller*** Current Customer: " + currentCustomer);
+
 				session.setAttribute("registered", currentCustomer.getCustomerEmail());
-				session.setAttribute("user", currentCustomer);
 
 			} catch (NullPointerException e) {
-				// System.out.println("No Account With Email Provided");
-				User user = userService.findByUserName(pl.getName());
-				session.setAttribute("email", user.getUserEmail());
+				e.printStackTrace();
+				session.setAttribute("registered", null);
+				System.out.println("SetAttribute registered to null");
 
 			}
 		}
@@ -109,7 +96,7 @@ public class CustomerController {
 	// Views include attributes
 	private ModelAndView customerFormView(ModelAndView modelAndView) {
 		modelAndView.setViewName("customerForm");
-		modelAndView.addObject("customers", service.findAll());
+		modelAndView.addObject("customers", service.findAllCustomer());
 		return modelAndView;
 	}
 
@@ -124,18 +111,19 @@ public class CustomerController {
 			return customerFormView(modelAndView);
 		} else {
 			// Link the user to the customer
-			customer.setUsers(userService.findUserByEmail(customer.getCustomerEmail()));
-			service.save(customer);
+			customer.setUsers(service.findUserByEmail(customer.getCustomerEmail()));
+			service.saveCustomer(customer);
 
 			// Get user Object using customer email
 			// CustomerEmail will always be valid at this point!!
-			User user = userService.findUserByEmail(customer.getCustomerEmail());
+			User user = service.findUserByEmail(customer.getCustomerEmail());
 
 			// Link with existing userId
 			// System.out.println("Customer ID: " + customer.getCustomerId());
-			service.saveCustomerUser(customer.getCustomerId(), user.getUserId());
+			// service.saveCustomerUser(customer.getCustomerId(), user.getUserId());
 
 			modelAndView.addObject("status", "Successfully save id: " + customer.getCustomerId());
+			System.out.println("Successfully save user: " + customer.getCustomerName());
 			return customerFormView(modelAndView);
 		}
 
@@ -143,10 +131,10 @@ public class CustomerController {
 
 	// @ModelAttribute user is a need If you go back to the main page.
 	@RequestMapping("/deleteCustomer")
-	ModelAndView delete(@ModelAttribute Customer customer, @RequestParam long customerId) throws InterruptedException {
+	ModelAndView delete(@ModelAttribute Customer customer, @RequestParam long customerId, HttpSession session) throws InterruptedException {
 		ModelAndView modelAndView = new ModelAndView();
 
-		List<Account> accountsOfCustomer = accountService.findAllByCusId(customerId);
+		List<Account> accountsOfCustomer = service.findAllAccountByCusId(customerId);
 		boolean balanceExist = false, transactionExist = false;
 
 		// Find all balance from account
@@ -159,23 +147,24 @@ public class CustomerController {
 
 		// Find transaction from each account;
 		for (Account acc : accountsOfCustomer) {
-			if (!tranService.findByFromAccNumber(acc.getAccountID()).isEmpty()) {
+			if (!service.findTransactionByFromAccNumber(acc.getAccountID()).isEmpty()) {
 				System.out.println(acc.getAccountHolder() + " Has transaction Available: "
-						+ tranService.findByFromAccNumber(acc.getAccountID()));
+						+ service.findTransactionByFromAccNumber(acc.getAccountID()));
 				transactionExist = true;
 			}
 		}
 
 		if (!balanceExist && !transactionExist) {
 			// Delete accounts that associate with the customer.
-			accountService.deleteAccountByCusId(customerId);
-			service.deleteById(customerId);
+			service.deleteAccountByCusId(customerId);
+			service.deleteCustomerById(customerId);
+			session.setAttribute("status", "success");
 
 			modelAndView.addObject("status", "Customer with id: " + customerId + " has been deleted");
 		} else {
 			modelAndView.addObject("status",
 					"Customer with id: " + customerId + " still have some balances and transactions");
-
+			session.setAttribute("status", "failed");
 		}
 
 		return customerFormView(modelAndView);
@@ -212,14 +201,14 @@ public class CustomerController {
 		Customer tempUser = customer;
 		System.out.println("customerId: " + customerId);
 		// Then delete the selected user on the database
-		service.deleteById(customerId);
+		service.deleteCustomerById(customerId);
 
 		// ******** MODIFY FIELD *********
 		tempUser.setCustomerName(customerName);
 		tempUser.setCustomerEmail(customerEmail);
 		tempUser.setCustomerPhone(customerPhone);
 
-		service.save(tempUser);
+		service.saveCustomer(tempUser);
 		System.out.println("Saving customer: " + tempUser);
 		modelAndView.addObject("status", "Updated user with id: " + customerId);
 

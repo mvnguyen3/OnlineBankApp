@@ -28,6 +28,16 @@ public class Branch {
 	@OneToMany(fetch = FetchType.EAGER)
 	private List<Account> accounts = new ArrayList<>();
 	
+	
+	
+	public Branch(String branchCountry, String branchState, String branchCity, String branchZipcode) {
+		super();
+		this.branchCountry = branchCountry;
+		this.branchState = branchState;
+		this.branchCity = branchCity;
+		this.branchZipcode = branchZipcode;
+	}
+
 	// Constructor
 	public Branch() {
 		// TODO Auto-generated constructor stub

@@ -13,24 +13,25 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.demobank.domain.Customer;
 import com.demobank.service.CustomerService;
+import com.demobank.service.UnifiedService;
 
 @RestController
 @RequestMapping("/cusR")
-public class customerRestController {
+public class CustomerRestController {
 	
 	@Autowired
-	CustomerService service;
+	UnifiedService service;
 		
 	@GetMapping("/showCustomer")
 	ResponseEntity<?> show(){
-		return new ResponseEntity<List<Customer>>(service.findAll(), HttpStatus.OK);
+		return new ResponseEntity<List<Customer>>(service.findAllCustomer(), HttpStatus.OK);
 	}
 	
 	@PostMapping("/saveCustomer")
 	ResponseEntity<?> save(@RequestBody Customer customer){
-		if(service.findById(customer.getCustomerId()) == null) {
+		if(service.findCustomerById(customer.getCustomerId()) == null) {
 			System.out.println("Customer: " + customer);
-			service.save(customer);
+			service.saveCustomer(customer);
 			return new ResponseEntity<Customer>(customer, HttpStatus.OK);
 		}
 		return new ResponseEntity<String>("User Existed", HttpStatus.BAD_REQUEST);
@@ -38,8 +39,8 @@ public class customerRestController {
 	
 	@PostMapping("deleteCustomer")
 	ResponseEntity<?> delete(@RequestBody long id) throws InterruptedException{
-		if((service.findById(id)) != null) {			
-			service.deleteById(id);
+		if((service.findCustomerById(id)) != null) {			
+			service.deleteCustomerById(id);
 			return new ResponseEntity<String>("User with id: " + id + " has been deleted", HttpStatus.OK);
 		}
 		return new ResponseEntity<String>("User with id: " + id + " is not existed", HttpStatus.BAD_REQUEST);

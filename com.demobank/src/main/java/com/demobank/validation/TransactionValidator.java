@@ -10,12 +10,13 @@ import org.springframework.validation.Validator;
 import com.demobank.domain.Account;
 import com.demobank.domain.Transaction;
 import com.demobank.service.AccountService;
+import com.demobank.service.UnifiedService;
 
 @Component
 public class TransactionValidator implements Validator {
 
 	@Autowired
-	AccountService accService;
+	UnifiedService service;
 
 	@Override
 	public boolean supports(Class<?> clazz) {
@@ -28,7 +29,7 @@ public class TransactionValidator implements Validator {
 		Transaction transaction = (Transaction) target;
 
 		long toAccId = transaction.getToAccountNumber();
-		List<Account> accounts = accService.findAllAccount();
+		List<Account> accounts = service.findAllAccount();
 		boolean idExist = false;
 		for (Account acc : accounts) {
 			if (acc.getAccountID() == toAccId) {

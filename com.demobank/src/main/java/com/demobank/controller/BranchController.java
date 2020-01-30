@@ -1,5 +1,8 @@
 package com.demobank.controller;
 
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,15 +16,20 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.demobank.domain.Branch;
 import com.demobank.service.BranchService;
+import com.demobank.service.UnifiedService;
 
 @Controller
 public class BranchController {
 	@Autowired
-	BranchService service;
+	UnifiedService service;
 	
 	@RequestMapping("/branchForm")
-	ModelAndView customerForm(Branch branch) {
+	ModelAndView customerForm(Branch branch, HttpSession session) {
 		ModelAndView modelAndView = new ModelAndView("branchForm");
+		
+		if(session.getAttribute("registered") == null)
+			return modelAndView;
+		
 		modelAndView.addObject("branches", service.findAllBranch());
 		return modelAndView;
 		
@@ -44,18 +52,33 @@ public class BranchController {
 			System.out.println("Error");
 			return FormView(modelAndView);
 		}else {
-			service.save(branch);
+			service.saveBranch(branch);
 			modelAndView.addObject("status", "Successfully save id: " + branch.getBranchId());
 			return FormView(modelAndView);
 		}
 		
 	}
 	
+	@PostMapping("/initialize")
+	ModelAndView saveForm() {
+		ModelAndView modelAndView = new ModelAndView();
+		List<Branch> branches = service.findAllBranch();
+		if(branches.isEmpty()) {
+			service.saveBranch(new Branch("US", "Il", "Chicago", "60630"));
+			return FormView(modelAndView);	
+		}
+		
+		else
+			return FormView(modelAndView);			
+	}
+	
+	
+	
 	// @ModelAttribute user is a need If you go back to the main page.
 	@RequestMapping("/deleteBranch")
 	ModelAndView delete(@ModelAttribute Branch branch, @RequestParam long branchId) {
 		ModelAndView modelAndView = new ModelAndView();
-		service.deleteById(branchId);
+		service.deleteBranchById(branchId);
 		modelAndView.addObject("status", "Branch with id: " + branchId + " has been deleted");
 
 		return FormView(modelAndView);

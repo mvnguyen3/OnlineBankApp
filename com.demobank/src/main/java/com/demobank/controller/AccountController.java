@@ -22,36 +22,29 @@ import com.demobank.service.AccountService;
 import com.demobank.service.BranchService;
 import com.demobank.service.CustomerService;
 import com.demobank.service.TransactionService;
+import com.demobank.service.UnifiedService;
 import com.demobank.service.UserService;
 
 @Controller
 public class AccountController {
 
 	@Autowired
-	AccountService service;
-
-	@Autowired
-	UserService userService;
-
-	@Autowired
-	CustomerService customerService;
-
-	@Autowired
-	BranchService branchService;
-
-	@Autowired
-	TransactionService transervice;
-
+	UnifiedService service;
+	
+	
 	@RequestMapping("/accountForm")
 	ModelAndView customerForm(Account account, HttpSession session) {
 		ModelAndView modelAndView = new ModelAndView("accountForm");
 		modelAndView.addObject("accounts", service.findAllAccount());
 		// ********** If user is not admin **********
 		if (session.getAttribute("Admin") == null) {
+			// Don't do anything if the customer is not yet registered
+			if(session.getAttribute("registered") == null)
+				return modelAndView;
 			Customer customer = (Customer) session.getAttribute("customer");
 			System.out.println("Current Customer: " + customer);
 			modelAndView.addObject("holder", customer.getCustomerName());
-			modelAndView.addObject("currentAccounts", service.findAllByCusId(customer.getCustomerId()));
+			modelAndView.addObject("currentAccounts", service.findAllAccountByCusId(customer.getCustomerId()));
 
 		}
 
@@ -67,7 +60,7 @@ public class AccountController {
 			Customer customer = (Customer) session.getAttribute("customer");
 			System.out.println("Current Customer: " + customer);
 			modelAndView.addObject("holder", customer.getCustomerName());
-			modelAndView.addObject("currentAccounts", service.findAllByCusId(customer.getCustomerId()));
+			modelAndView.addObject("currentAccounts", service.findAllAccountByCusId(customer.getCustomerId()));
 
 		}
 
@@ -86,7 +79,7 @@ public class AccountController {
 		} else {
 			// *** Set customer to account ***
 			// System.out.println("Current Customer: " + session.getAttribute("customer"));
-			Branch branch = branchService.findById(1l);
+			Branch branch = service.findBranchById(1l);
 			Customer customer = (Customer) session.getAttribute("customer");
 			account.setAccountBranch(branch);
 			account.setAccountCustomers(customer);
@@ -110,12 +103,17 @@ public class AccountController {
 
 		// Validation goes here...
 		// find all transaction by using accountId.
-		List<Transaction> transactions = transervice.findByFromAccNumber(accountId);
-		System.out.println("Transactions from input account: " + transactions);
+		List<Transaction> transactions = service.findTransactionByFromAccNumber(accountId);
+		
 		if (transactions.isEmpty()) {
 			service.deleteAccountById(accountId);
 			modelAndView.addObject("status", "Account with id: " + accountId + " has been deleted");
+			session.setAttribute("status", "success");
+			
 		}else {
+			System.out.println("Transactions from input account: " + transactions);
+			System.out.println("Can't delete account with transaction available!!");
+			session.setAttribute("status", "failed");
 			modelAndView.addObject("status", "Account with id: " + accountId + " still have some transactions on it");
 		}
 		

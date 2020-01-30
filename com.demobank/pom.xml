@@ -17,7 +17,10 @@
 
 	<properties>
 		<java.version>1.8</java.version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
+	
 
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter -->
@@ -26,7 +29,6 @@
 			<artifactId>spring-boot-starter-mail</artifactId>
 			<version>2.2.0.RELEASE</version>
 		</dependency>
-
 
 
 		<!-- https://mvnrepository.com/artifact/org.codehaus.woodstox/stax2-api -->
@@ -41,7 +43,14 @@
 			<artifactId>cxf-spring-boot-starter-jaxws</artifactId>
 			<version>3.3.3</version>
 		</dependency>
-
+		
+		<!-- For Deploy into tomcat server purposes -->
+		<!-- Remove embedded Tomcat server -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<scope>provided</scope>
+		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
 
@@ -74,12 +83,20 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-jasper -->
+
+
+		<!-- https://mvnrepository.com/artifact/org.apache.tomcat.embed/tomcat-embed-jasper -->
+		<!-- <dependency> <groupId>org.apache.tomcat.embed</groupId> <artifactId>tomcat-embed-jasper</artifactId> 
+			<version>9.0.30</version>$NO-MVN-MAN-VER$ </dependency> -->
+
+		<!-- https://mvnrepository.com/artifact/org.apache.tomcat.embed/tomcat-embed-jasper -->
 		<dependency>
-			<groupId>org.apache.tomcat</groupId>
-			<artifactId>tomcat-jasper</artifactId>
-			<version>9.0.27</version>
+			<groupId>org.apache.tomcat.embed</groupId>
+			<artifactId>tomcat-embed-jasper</artifactId>
 		</dependency>
+
+
+
 
 
 		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
@@ -138,6 +155,8 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
+		<finalName>meanbank</finalName>
 	</build>
 
+	<packaging>war</packaging>
 </project>

@@ -5,18 +5,18 @@ import java.util.List;
 import com.demobank.domain.Customer;
 
 public interface CustomerService {
-	List<Customer> findAll();
+	List<Customer> findAllCustomer();
 
-	void save(Customer customer);
+	void saveCustomer(Customer customer);
 
-	void deleteById(long id) throws InterruptedException;
+	void deleteCustomerById(long id) throws InterruptedException;
 
-	Customer findById(long id);
+	Customer findCustomerById(long id);
 
-	void saveCustomerUser(long customerId, long userId);
+	void saveLinkCustomerUser(long customerId, long userId);
 
-	Customer findByEmail(String email);
+	Customer findCustomerByEmail(String email);
 
-	Customer findByName(String name);
+	Customer findCustomerByName(String name);
 
 }

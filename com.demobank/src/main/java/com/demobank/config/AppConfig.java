@@ -41,9 +41,16 @@ public class AppConfig implements WebMvcConfigurer {
 	DriverManagerDataSource dataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-		dataSource.setUrl("jdbc:mysql://localhost:3306/demobankdb?useSSL=false&serverTimezone=UTC");
+		dataSource.setUrl("jdbc:mysql://localhost:3306/demobankdb?useSSL=false&serverTimezone=UTC&createDatabaseIfNotExist=true");
 		dataSource.setUsername("root");
 		dataSource.setPassword("Cps38102991");
+		
+		// ********** AWS database ******
+		//dataSource.setUrl("jdbc:mysql://moviedb.cm9gqvnlsiwo.us-west-1.rds.amazonaws.com:3306/ZenoSama?createDatabaseIfNotExist=true"); Yong database
+//		dataSource.setUrl("jdbc:mysql://demobankdb1.c0qlxlpe7x0e.us-east-2.rds.amazonaws.com:3306/ZenoSama?createDatabaseIfNotExist=true");
+//		dataSource.setUsername("admin");
+//		dataSource.setPassword("admin123");
+		// ******************************
 		
 		return dataSource;		
 	}
@@ -58,7 +65,7 @@ public class AppConfig implements WebMvcConfigurer {
 		// If had more class on domain, must add here
 		sessionFactory.setAnnotatedClasses(Account.class, Branch.class, Transaction.class,  Customer.class); 
 		sessionFactory.setHibernateProperties(hibernateProperties());
-		
+			
 				
 		return sessionFactory;
 	}

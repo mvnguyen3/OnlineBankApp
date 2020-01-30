@@ -17,7 +17,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
-@Entity
+@Entity(name="account")
 public class Account {
 	
 	@Id 

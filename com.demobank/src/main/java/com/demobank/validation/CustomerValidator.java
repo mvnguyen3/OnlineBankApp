@@ -9,16 +9,14 @@ import org.springframework.validation.Validator;
 
 import com.demobank.domain.Customer;
 import com.demobank.service.CustomerService;
+import com.demobank.service.UnifiedService;
 import com.demobank.service.UserService;
 
 @Component
 public class CustomerValidator implements Validator {
 
 	@Autowired
-	CustomerService service;
-	
-	@Autowired
-	UserService userService;
+	UnifiedService service;
 	
 
 	@Override
@@ -36,7 +34,7 @@ public class CustomerValidator implements Validator {
 		try {
 			// Validate user input cannot be empty for all field	
 			
-			List<Customer> customers = service.findAll();			
+			List<Customer> customers = service.findAllCustomer();			
 			for(Customer c: customers) {
 				if(customer.getCustomerEmail().equals(c.getCustomerEmail())) {
 					errors.rejectValue("customerEmail", "customer.customerEmail.exists", c.getCustomerEmail() + " is already existed !!!");
@@ -50,10 +48,10 @@ public class CustomerValidator implements Validator {
 			}
 			
 			// If customer email doesn't match with user email  -- Will return null if no match
-			if(userService.findUserByEmail(customer.getCustomerEmail()) == null) {
+			if(service.findUserByEmail(customer.getCustomerEmail()) == null) {
 				errors.rejectValue("customerEmail", "customer.customerEmail.notMatch", customer.getCustomerEmail() + " does not match in record !!!");
 			}
-			if(service.findByEmail(customer.getCustomerEmail()) != null) {
+			if(service.findCustomerByEmail(customer.getCustomerEmail()) != null) {
 				errors.rejectValue("customerEmail", "customer.customerEmail.Exist", customer.getCustomerEmail() + " is already exist !!!");
 			}
 			

@@ -181,7 +181,7 @@ body {
 		</form:form>
 	</div>
 	<!--Display the user only the login role is admin or manager -->
-	<sec:authorize access="hasAuthority('admin')">
+	<sec:authorize access="hasAuthority('admin') || hasRole('Admin')">
 
 		<c:if test="${not empty users}">
 
@@ -218,15 +218,32 @@ body {
 	</sec:authorize>
 	<%-- <%=session.getAttribute("user") %> --%>
 	<!-- Ternary Operator  -->
-	<c:if test="${not empty status}">
+	<%-- <c:if test="${not empty status}">
 		<img style="border-radius: 50%" src="images/zeno_customer.jpg"
-			alt="Ultra Instict Goku" width="150" height="150" />
+			alt="Zeno" width="150" height="150" />
 	${status}
-	</c:if>
-	<!-- <div>
-		Note Center:
-			- Don't delete user.....
-	</div> -->
+	</c:if> --%>
+	<%
+		try {
+			if (session.getAttribute("status").toString().equalsIgnoreCase("failed")) {
+	%>
+	<img style="border-radius: 50%" src="images/beerus_hakai.png"
+		alt="beerus" width="150" height="150" />
+	<%
+		session.removeAttribute("status");
+		} else {
+	%>
+
+	<img style="border-radius: 50%" src="images/zeno_customer.jpg"
+		alt="Zeno" width="150" height="150" />
+	<%
+	session.removeAttribute("status");
+		}
+		} catch (NullPointerException ne) {
+			System.out.println("Null Pointer Exception");
+		}
+	%>
+	${status}
 </body>
 </html>
 

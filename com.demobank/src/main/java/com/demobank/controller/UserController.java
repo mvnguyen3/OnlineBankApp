@@ -24,34 +24,25 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.demobank.domain.Account;
+import com.demobank.domain.Branch;
 import com.demobank.domain.Customer;
 import com.demobank.domain.Transaction;
 import com.demobank.domain.User;
 import com.demobank.service.AccountService;
+import com.demobank.service.BranchService;
 import com.demobank.service.CustomerService;
 import com.demobank.service.RoleService;
 import com.demobank.service.TransactionService;
+import com.demobank.service.UnifiedService;
 import com.demobank.service.UserService;
 import com.demobank.validation.UserValidator;
+import com.demobank.config.SecurityConfig.*;
 
 @Controller
 public class UserController {
 
 	@Autowired
-	UserService userService;
-
-	// Use to save userId with UserRole
-	@Autowired
-	RoleService roleService;
-
-	@Autowired
-	CustomerService customerService;
-
-	@Autowired
-	AccountService accountService;
-
-	@Autowired
-	TransactionService tranService;
+	UnifiedService service;
 
 	@Autowired
 	UserValidator userValidator;
@@ -66,10 +57,15 @@ public class UserController {
 
 	}
 
+
 	// Main entrance of the form
 	@RequestMapping("/")
 	ModelAndView welcome() {
-		ModelAndView model = new ModelAndView("welcome");
+		ModelAndView model = new ModelAndView("welcome");	
+		System.out.println("Hello ");
+		// Initialize branch
+		
+		
 
 		return model;
 	}
@@ -77,27 +73,11 @@ public class UserController {
 	@RequestMapping("/userForm")
 	ModelAndView userForm(User user, HttpSession session, Principal pl) {
 		ModelAndView modelAndView = new ModelAndView("userForm");
-		modelAndView.addObject("users", userService.findAll());
+		modelAndView.addObject("users", service.findAllUsers());
 
-		// ************ TESTING AREA **************
-//		System.out.println("Name from Pricipal: " + pl.getName());
-//		System.out.println("UserId: " + currentUser.getUserId() + " Link with CustomerId: "
-//				+ roleService.getCustomerId(2L));
-
-		// ***************************************
-
-//		if (session.getAttribute("inSession") == null) {
-//			System.out.println("*****My user Name: " + user.getUsername());
-//			System.out.println("Current User Login: " + userService.findByUserName(user.getUsername()));
-//			session.setAttribute("user", userService.findByUserName(user.getUsername()));
-//			session.setAttribute("Admin", "In session");
-//			// session.setAttribute("sessionInit", "Yes");
-//			session.setAttribute("inSession", "Not Null");
-//
-//		}
 		try {
-			if (userService.findByUserName(pl.getName()) != null) {
-				User currentUser = userService.findByUserName(pl.getName());
+			if (service.findByUserName(pl.getName()) != null) {
+				User currentUser = service.findByUserName(pl.getName());
 				System.out.println("Current User: ***Admin***");
 				session.setAttribute("user", currentUser);
 				session.setAttribute("Admin", "In session");
@@ -110,7 +90,7 @@ public class UserController {
 
 		try {
 
-			user.setUserId(userService.getMaxId());
+			user.setUserId(service.getUserMaxId());
 		} catch (Exception e) {
 			System.out.println("Sign Up User");
 		}
@@ -122,7 +102,7 @@ public class UserController {
 	// Set back the View Which contains all the Object
 	ModelAndView userFormView(ModelAndView modelAndView) {
 		modelAndView.setViewName("userForm");
-		modelAndView.addObject("users", userService.findAll());
+		modelAndView.addObject("users", service.findAllUsers());
 
 		return modelAndView;
 	}
@@ -131,7 +111,7 @@ public class UserController {
 	@PostMapping("/saveUserForm")
 	ModelAndView saveForm(@ModelAttribute @Valid User user, BindingResult br, HttpSession session) {
 		ModelAndView modelAndView = new ModelAndView();
-		System.out.println(userService.findAll());
+		System.out.println(service.findAllUsers());
 		// For Validation
 		if (br.hasErrors()) {
 			System.out.println("Error");
@@ -139,10 +119,15 @@ public class UserController {
 		} else {
 			modelAndView.addObject("status", "Successfully save user");
 			session.setAttribute("newUser", "Not Null");
-			user.setPassword(pbkdf2.encode(user.getPassword()));
-			roleService.saveRole(user.getUserId(), 2L); // Auto set the new user to user authority.
-			userService.saveUser(user);
-
+			user.setPassword(pbkdf2.encode(user.getPassword()));			
+			if(user.getUserId() > 0L) {
+				service.saveLinkUserRole(user.getUserId(), 2L); // If the userId is more than 0. They are normal user.
+				service.saveUser(user);
+			}					
+			else {
+				service.saveLinkUserRole(user.getUserId(), 1L); 
+				service.saveUser(user);
+			}
 			return userFormView(modelAndView);
 		}
 
@@ -150,56 +135,75 @@ public class UserController {
 
 	// @ModelAttribute user is a need If you go back to the main page.
 	@RequestMapping("/deleteUser")
-	ModelAndView deleteUser(@ModelAttribute User user, @RequestParam long userId) throws InterruptedException {
+	ModelAndView deleteUser(@ModelAttribute User user, @RequestParam long userId, HttpSession session) throws InterruptedException {
 		ModelAndView modelAndView = new ModelAndView();
 
 		try {
-
-			// ALWAYS DELETE THE CHILD COMPONENT FIRST.
-			// Everything which is linked to this user is also be deleted
-			if (roleService.getCustomerId(userId) != 0) {
-				long customerLinkedId = roleService.getCustomerId(userId); // customer Id
-				List<Account> accountsOfCustomer = accountService.findAllByCusId(customerLinkedId);
-				boolean balanceExist = false, transactionExist = false;
-
-				for (Account acc : accountsOfCustomer) {
-					if (acc.getAccountBalance() > 0) {
-						System.out
-								.println(acc.getAccountHolder() + " Has Balance Available: " + acc.getAccountBalance());
-						balanceExist = true;
-					}
+			
+			List<Customer> customers = service.findAllCustomer();
+			for(Customer c: customers) {
+				if(c.getUsers().getUserId() == userId) {
+					System.out.println("Can't delete user \nThere is a customer's account which linked to this user");
+					modelAndView.addObject("status", "User with id: " + userId + " still has a link to another customer");
+					session.setAttribute("status", "failed");
 				}
-
-				// Find transaction from each account;
-				for (Account acc : accountsOfCustomer) {
-					if (!tranService.findByFromAccNumber(acc.getAccountID()).isEmpty()) {
-						System.out.println(acc.getAccountHolder() + " Has transaction Available: "
-								+ tranService.findByFromAccNumber(acc.getAccountID()));
-						transactionExist = true;
-					}
+					
+				else {
+					session.setAttribute("status", "success");
+					service.deleteUserById(userId);
+					modelAndView.addObject("status", "User with id: " + userId + " has been deleted successfully");
 				}
-
-				// If there is no balance and transaction on the account. We can delete the
-				// user.
-				if (!balanceExist && !transactionExist) {
-					accountService.deleteAccountByCusId(customerLinkedId); // Delete accounts that associate with the
-																			// customer.
-					// System.out.println("CustomerLinkedId: " + customerLinkedId);
-					// Delete customer linked
-					customerService.deleteById(customerLinkedId); // Customer Link Delete
-
-					Thread.sleep(500);
-					userService.deleteById(userId);
-					modelAndView.addObject("status", "User with id: " + userId + " has been deleted");
-				} else {
-					modelAndView.addObject("status",
-							"User with id: " + userId + " still has some balance and transactions");
-				}
-				// If there is no link customer...
-			}else {
-				userService.deleteById(userId);
-				modelAndView.addObject("status", "User with id: " + userId + " has been deleted");
 			}
+			
+			// ******************* OLD CODE ***********************************
+//			// ALWAYS DELETE THE CHILD COMPONENT FIRST.
+//			// Everything which is linked to this user is also be deleted
+//			if (roleService.getCustomerId(userId) != 0) {
+//				long customerLinkedId = roleService.getCustomerId(userId); // customer Id
+//				List<Account> accountsOfCustomer = accountService.findAllByCusId(customerLinkedId);
+//				boolean balanceExist = false, transactionExist = false;
+//
+//				for (Account acc : accountsOfCustomer) {
+//					if (acc.getAccountBalance() > 0) {
+//						System.out
+//								.println(acc.getAccountHolder() + " Has Balance Available: " + acc.getAccountBalance());
+//						balanceExist = true;
+//					}
+//				}
+//
+//				// Find transaction from each account;
+//				for (Account acc : accountsOfCustomer) {
+//					if (!tranService.findByFromAccNumber(acc.getAccountID()).isEmpty()) {
+//						System.out.println(acc.getAccountHolder() + " Has transaction Available: "
+//								+ tranService.findByFromAccNumber(acc.getAccountID()));
+//						transactionExist = true;
+//					}
+//				}
+//
+//				// If there is no balance and transaction on the account. We can delete the
+//				// user.
+//				if (!balanceExist && !transactionExist) {
+//					accountService.deleteAccountByCusId(customerLinkedId); // Delete accounts that associate with the
+//																			// customer.
+//					// System.out.println("CustomerLinkedId: " + customerLinkedId);
+//					// Delete customer linked
+//					customerService.deleteById(customerLinkedId); // Customer Link Delete
+//
+//					Thread.sleep(500);
+//					userService.deleteById(userId);
+//					modelAndView.addObject("status", "User with id: " + userId + " has been deleted");
+//				} else {
+//					modelAndView.addObject("status",
+//							"User with id: " + userId + " still has some balance and transactions");
+//				}
+//				// If there is no link customer...
+//			} else {
+//				/*
+//				 * userService.deleteById(userId); modelAndView.addObject("status",
+//				 * "User with id: " + userId + " has been deleted");
+//				 */
+//			}
+			// ******************* OLD CODE ***********************************
 
 		} catch (Exception e) {
 			System.out.println("Null Pointer Exception");
@@ -237,13 +241,13 @@ public class UserController {
 		User tempUser = user;
 		System.out.println("userId: " + userId);
 		// Then delete the selected user on the database
-		userService.deleteById(userId);
+		service.deleteUserById(userId);
 
 		// Finally, modify the temp user and save it back to the database
 		tempUser.setUserEmail(userEmail);
 		tempUser.setUserMobile(userMobile);
 
-		userService.saveUser(tempUser);
+		service.saveUser(tempUser);
 		System.out.println("Saving user: " + tempUser);
 		modelAndView.addObject("status", "Updated user with id: " + userId);
 
@@ -263,6 +267,35 @@ public class UserController {
 		ModelAndView modelAndView = new ModelAndView("login");
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String errorMessage = null;
+		
+		// ************** Initializing *************
+		try {
+			if (service.findAllBranch().isEmpty()) {
+				System.out.println("Initializing branch...");
+				service.saveBranch(new Branch("US", "Il", "Chicago", "60630"));
+
+			}
+			// *********
+
+			// Initialize Role
+				if(service.findRole().isEmpty()) {				
+					System.out.println("Initializing role...");
+					service.saveRole(1L, "admin");
+					service.saveRole(2L, "user");
+					
+				}		
+			// **************
+				
+				// Initialize user
+//				if(userService.findUserById(0L) == null) {
+//					System.out.println("Initializing User");
+//					userService.saveUser(new User(0L, "minh", "minh"));
+//				}
+		}catch(NullPointerException e) {
+			e.printStackTrace();
+		}
+		// ***********************************
+		
 		if (error != null) {
 			count++;
 			errorMessage = "Either username or password is incorrect.";

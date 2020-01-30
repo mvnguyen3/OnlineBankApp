@@ -11,17 +11,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.demobank.domain.User;
+import com.demobank.service.UnifiedService;
 import com.demobank.service.UserService;
 
 @RestController
 public class userRestController {
 	@Autowired
-	UserService userService;
+	UnifiedService service;
 	
 	@PostMapping("/saveUser")
 	ResponseEntity<?> saveUser(@RequestBody User user){
-		if(userService.findUserById(user.getUserId()) == null) {
-			userService.saveUser(user);
+		if(service.findUserById(user.getUserId()) == null) {
+			service.saveUser(user);
 			return new ResponseEntity<User>(user, HttpStatus.ACCEPTED);
 		}
 		return new ResponseEntity<String>("User existed", HttpStatus.BAD_REQUEST);		
@@ -30,13 +31,13 @@ public class userRestController {
 	
 	@GetMapping("/showUser")
 	ResponseEntity<?> showUser(){
-		return new ResponseEntity<List<User>>(userService.findAll(), HttpStatus.OK);
+		return new ResponseEntity<List<User>>(service.findAllUsers(), HttpStatus.OK);
 	}
 	
 	@PostMapping("/deleteUserById")
 	ResponseEntity<?> deleteUser(@RequestBody long id){
-		if(userService.findUserById(id) != null) {
-			userService.deleteById(id);
+		if(service.findUserById(id) != null) {
+			service.deleteUserById(id);
 			return new ResponseEntity<String>("User with id:" + id + " has been deleted!!", HttpStatus.OK);
 		}
 		return new ResponseEntity<String>("User with id: " + id + " does not existed", HttpStatus.BAD_REQUEST);

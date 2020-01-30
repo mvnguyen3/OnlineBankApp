@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.demobank.domain.Branch;
 import com.demobank.service.BranchService;
+import com.demobank.service.UnifiedService;
 
 // RestController is for postman
 
@@ -20,14 +21,14 @@ import com.demobank.service.BranchService;
 @RequestMapping("/BranhR")
 public class BranchRestController {
 	@Autowired
-	BranchService branchService;
+	UnifiedService service;
 	
 	
 	// Save Branch to database
 	@PostMapping("/saveBranch")
 	public ResponseEntity<?> saveBranch(@RequestBody Branch branch) {
-		if(!branchService.exist(branch)) {
-			branchService.save(branch);
+		if(!service.branchExist(branch)) {
+			service.saveBranch(branch);
 			return new ResponseEntity<Branch>(branch, HttpStatus.CREATED);
 		}
 		else {
@@ -37,16 +38,16 @@ public class BranchRestController {
 	
 	@PostMapping("/deleteBranch")
 	public ResponseEntity<?> deleteBranch(@RequestBody long branchId){
-		if(!branchService.existById(branchId)) {
+		if(!service.branchExistById(branchId)) {
 			return new ResponseEntity<String>("Branch with id: " + branchId + " doesn not exist!", HttpStatus.FAILED_DEPENDENCY);
 		}		
-		branchService.deleteById(branchId);
+		service.deleteBranchById(branchId);
 		return new ResponseEntity<String>("Sucessfully deleted id: " + branchId, HttpStatus.OK);		
 	}
 	
 	@GetMapping("/showBranch")
 	public ResponseEntity<?> showBranch(){
-		return new ResponseEntity<List<Branch>>(branchService.findAllBranch(), HttpStatus.OK);
+		return new ResponseEntity<List<Branch>>(service.findAllBranch(), HttpStatus.OK);
 	}
 }
 

@@ -6,11 +6,11 @@ import com.demobank.domain.User;
 
 public interface UserService {
 	User saveUser(User user);
-	List<User> findAll();
-	void deleteById(long userId);
+	List<User> findAllUsers();
+	void deleteUserById(long userId);
 	void updateUser();
 	User findUserById(long userId);
-	long getMaxId();
+	long getUserMaxId();
 	User findUserByEmail(String email);
 	User findByUserName(String username);
 }

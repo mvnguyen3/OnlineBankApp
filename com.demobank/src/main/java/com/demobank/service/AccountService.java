@@ -6,11 +6,11 @@ import com.demobank.domain.Account;
 
 public interface AccountService {
 	Account saveAccount(Account account);
-	List<Account> findAllByCusId(long customerLinkedId);
-	boolean exist(long id);
+	List<Account> findAllAccountByCusId(long customerLinkedId);
+	boolean accountExist(long id);
 	List<Account> findAllAccount();
 	void deleteAccountById(long id);
 	void deleteAccountByCusId(long customerId);
-	void saveAccountCustomer(long customerId, long accountId);
+	void saveLinkAccountCustomer(long customerId, long accountId);
 	
 }

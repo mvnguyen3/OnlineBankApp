@@ -5,8 +5,8 @@ import java.util.List;
 import com.demobank.domain.Transaction;
 
 public interface TransactionService {
-	void save(Transaction transaction); // Assumed transaction object is always be valid
-	List<Transaction> findAll();
-	void deleteByIdfix(long toAccountNumber);
-	List<Transaction> findByFromAccNumber(long accountId);
+	void saveTransaction(Transaction transaction); // Assumed transaction object is always be valid
+	List<Transaction> findAllTransactions();
+	void deleteTransactionByIdfix(long toAccountNumber);
+	List<Transaction> findTransactionByFromAccNumber(long accountId);
 }

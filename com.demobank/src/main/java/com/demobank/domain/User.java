@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Email;
@@ -40,15 +41,34 @@ public class User {
 
 	@Size(min = 12, max = 12)
 	private String userMobile;
-
+	
+	@OneToOne
+	private Customer customer;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "user_role", joinColumns = { @JoinColumn(name = "userId") }, inverseJoinColumns = {
 			@JoinColumn(name = "roleId") })
 	private Set<Role> userRoles = new HashSet<>();
 
+	
+	
+	public User(@NotNull long userId, @NotEmpty String username, @NotEmpty String password) {
+		super();
+		this.userId = userId;
+		this.username = username;
+		this.password = password;
+	}
+
 	public User() {
 		// TODO Auto-generated constructor stub
+	}
+
+	public Customer getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
 	}
 
 	public long getUserId() {
@@ -91,7 +111,7 @@ public class User {
 		this.userMobile = userMobile;
 	}
 
-	@XmlTransient // Should not get user role ...
+//	@XmlTransient // Should not get user role ...
 	public Set<Role> getUserRoles() {
 		return userRoles;
 	}

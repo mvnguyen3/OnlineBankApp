@@ -94,7 +94,7 @@ body {
 			<tbody>
 				<tr>
 					<!-- For Admin use only  -->
-					<sec:authorize access="hasAuthority('admin')">
+					<sec:authorize access="hasAuthority('admin') || hasRole('Admin')">
 						<td><a href="/userForm"><button id="userBtn"
 									class="btn btn-primary">User</button></a></td>
 					</sec:authorize>
@@ -234,7 +234,7 @@ body {
 		}
 	%>
 
-	<sec:authorize access="hasAuthority('admin')">
+	<sec:authorize access="hasAuthority('admin') || hasRole('Admin')">
 		<c:if test="${not empty customers}">
 			<div style="overflow: auto">
 				<table border="1">
@@ -277,11 +277,33 @@ body {
 	</sec:authorize>
 	<%-- <%=session.getAttribute("user")%> --%>
 
-	<c:if test="${not empty status}">
+<%-- 	<c:if test="${not empty status}">
 		<img style="border-radius: 50%" src="images/zeno_customer.jpg"
 		alt="Ultra Instict Goku" width="150" height="150" />
 	${status}
-	</c:if>
+	</c:if> --%>
+	
+	<%
+		try {
+			if (session.getAttribute("status").toString().equalsIgnoreCase("failed")) {
+	%>
+	<img style="border-radius: 50%" src="images/beerus_hakai.png"
+		alt="beerus" width="150" height="150" />
+	<%
+		session.removeAttribute("status");
+		} else {
+	%>
+
+	<img style="border-radius: 50%" src="images/zeno_customer.jpg"
+		alt="Zeno" width="150" height="150" />
+	<%
+	session.removeAttribute("status");
+		}
+		} catch (NullPointerException ne) {
+			System.out.println("Null Pointer Exception");
+		}
+	%>
+	${status}
 
 </body>
 </html>
