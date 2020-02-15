@@ -13,14 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.demobank.domain.Customer;
 import com.demobank.service.CustomerService;
-import com.demobank.service.UnifiedService;
 
 @RestController
 @RequestMapping("/cusR")
 public class CustomerRestController {
 	
 	@Autowired
-	UnifiedService service;
+	CustomerService service;
 		
 	@GetMapping("/showCustomer")
 	ResponseEntity<?> show(){

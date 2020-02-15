@@ -22,16 +22,26 @@ import com.demobank.service.AccountService;
 import com.demobank.service.BranchService;
 import com.demobank.service.CustomerService;
 import com.demobank.service.TransactionService;
-import com.demobank.service.UnifiedService;
 import com.demobank.service.UserService;
 
 @Controller
 public class AccountController {
 
 	@Autowired
-	UnifiedService service;
-	
-	
+	AccountService service;
+
+	@Autowired
+	UserService userService;
+
+	@Autowired
+	CustomerService customerService;
+
+	@Autowired
+	BranchService branchService;
+
+	@Autowired
+	TransactionService transervice;
+
 	@RequestMapping("/accountForm")
 	ModelAndView customerForm(Account account, HttpSession session) {
 		ModelAndView modelAndView = new ModelAndView("accountForm");
@@ -79,7 +89,7 @@ public class AccountController {
 		} else {
 			// *** Set customer to account ***
 			// System.out.println("Current Customer: " + session.getAttribute("customer"));
-			Branch branch = service.findBranchById(1l);
+			Branch branch = branchService.findBranchById(1l);
 			Customer customer = (Customer) session.getAttribute("customer");
 			account.setAccountBranch(branch);
 			account.setAccountCustomers(customer);
@@ -103,7 +113,7 @@ public class AccountController {
 
 		// Validation goes here...
 		// find all transaction by using accountId.
-		List<Transaction> transactions = service.findTransactionByFromAccNumber(accountId);
+		List<Transaction> transactions = transervice.findTransactionByFromAccNumber(accountId);
 		
 		if (transactions.isEmpty()) {
 			service.deleteAccountById(accountId);

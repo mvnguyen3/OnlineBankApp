@@ -16,12 +16,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.demobank.domain.Branch;
 import com.demobank.service.BranchService;
-import com.demobank.service.UnifiedService;
 
 @Controller
 public class BranchController {
 	@Autowired
-	UnifiedService service;
+	BranchService service;
 	
 	@RequestMapping("/branchForm")
 	ModelAndView customerForm(Branch branch, HttpSession session) {

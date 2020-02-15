@@ -28,7 +28,6 @@ import com.demobank.domain.User;
 import com.demobank.service.AccountService;
 import com.demobank.service.CustomerService;
 import com.demobank.service.TransactionService;
-import com.demobank.service.UnifiedService;
 import com.demobank.service.UserService;
 import com.demobank.validation.CustomerValidator;
 
@@ -36,7 +35,16 @@ import com.demobank.validation.CustomerValidator;
 public class CustomerController {
 
 	@Autowired
-	UnifiedService service;
+	CustomerService service;
+
+	@Autowired
+	UserService userService;
+
+	@Autowired
+	AccountService accountService;
+
+	@Autowired
+	TransactionService tranService;
 
 	@Autowired
 	CustomerValidator customervalidator;
@@ -59,7 +67,7 @@ public class CustomerController {
 			// Check if customer is already registered
 			try {
 				// check by using useremail.
-				User user = service.findByUserName(pl.getName());
+				User user = userService.findByUserName(pl.getName());
 				String userEmail = user.getUserEmail();
 				// System.out.println("User Email:" + userEmail);
 				Customer currentCustomer = service.findCustomerByEmail(userEmail);
@@ -111,12 +119,12 @@ public class CustomerController {
 			return customerFormView(modelAndView);
 		} else {
 			// Link the user to the customer
-			customer.setUsers(service.findUserByEmail(customer.getCustomerEmail()));
+			customer.setUsers(userService.findUserByEmail(customer.getCustomerEmail()));
 			service.saveCustomer(customer);
 
 			// Get user Object using customer email
 			// CustomerEmail will always be valid at this point!!
-			User user = service.findUserByEmail(customer.getCustomerEmail());
+			User user = userService.findUserByEmail(customer.getCustomerEmail());
 
 			// Link with existing userId
 			// System.out.println("Customer ID: " + customer.getCustomerId());
@@ -134,7 +142,7 @@ public class CustomerController {
 	ModelAndView delete(@ModelAttribute Customer customer, @RequestParam long customerId, HttpSession session) throws InterruptedException {
 		ModelAndView modelAndView = new ModelAndView();
 
-		List<Account> accountsOfCustomer = service.findAllAccountByCusId(customerId);
+		List<Account> accountsOfCustomer = accountService.findAllAccountByCusId(customerId);
 		boolean balanceExist = false, transactionExist = false;
 
 		// Find all balance from account
@@ -147,16 +155,16 @@ public class CustomerController {
 
 		// Find transaction from each account;
 		for (Account acc : accountsOfCustomer) {
-			if (!service.findTransactionByFromAccNumber(acc.getAccountID()).isEmpty()) {
+			if (!tranService.findTransactionByFromAccNumber(acc.getAccountID()).isEmpty()) {
 				System.out.println(acc.getAccountHolder() + " Has transaction Available: "
-						+ service.findTransactionByFromAccNumber(acc.getAccountID()));
+						+ tranService.findTransactionByFromAccNumber(acc.getAccountID()));
 				transactionExist = true;
 			}
 		}
 
 		if (!balanceExist && !transactionExist) {
 			// Delete accounts that associate with the customer.
-			service.deleteAccountByCusId(customerId);
+			accountService.deleteAccountByCusId(customerId);
 			service.deleteCustomerById(customerId);
 			session.setAttribute("status", "success");
 

@@ -9,14 +9,16 @@ import org.springframework.validation.Validator;
 
 import com.demobank.domain.Customer;
 import com.demobank.service.CustomerService;
-import com.demobank.service.UnifiedService;
 import com.demobank.service.UserService;
 
 @Component
 public class CustomerValidator implements Validator {
 
 	@Autowired
-	UnifiedService service;
+	CustomerService service;
+	
+	@Autowired
+	UserService userService;
 	
 
 	@Override
@@ -48,7 +50,7 @@ public class CustomerValidator implements Validator {
 			}
 			
 			// If customer email doesn't match with user email  -- Will return null if no match
-			if(service.findUserByEmail(customer.getCustomerEmail()) == null) {
+			if(userService.findUserByEmail(customer.getCustomerEmail()) == null) {
 				errors.rejectValue("customerEmail", "customer.customerEmail.notMatch", customer.getCustomerEmail() + " does not match in record !!!");
 			}
 			if(service.findCustomerByEmail(customer.getCustomerEmail()) != null) {

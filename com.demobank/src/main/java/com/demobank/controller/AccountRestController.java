@@ -13,41 +13,34 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.demobank.domain.Account;
 import com.demobank.service.AccountService;
-import com.demobank.service.UnifiedService;
 
 @RestController
 @RequestMapping("/accR")
 public class AccountRestController {
 	
 	@Autowired
-	UnifiedService service;
+	AccountService accountService;
 	
 	@PostMapping("/saveAccount")
 	ResponseEntity<?> saveAccount(@RequestBody Account account){
 		// Check if the account is already exists
-		if(!service.accountExist(account.getAccountID())) 
-			return new ResponseEntity<Account>(service.saveAccount(account), HttpStatus.OK);			
+		if(!accountService.accountExist(account.getAccountID())) 
+			return new ResponseEntity<Account>(accountService.saveAccount(account), HttpStatus.OK);			
 		return new ResponseEntity<String>("The account id:" + account.getAccountID() + " exists !!!", HttpStatus.FAILED_DEPENDENCY);			
 	}
 	
 	@GetMapping("/showAccount")
 	ResponseEntity<?> showAccount(){
-		return new ResponseEntity<List<Account>>(service.findAllAccount(), HttpStatus.OK);
-	}
-	
-	@GetMapping("/showAccount2")
-	List<Account> showAc22count(){
-		
-		return service.findAllAccount();
+		return new ResponseEntity<List<Account>>(accountService.findAllAccount(), HttpStatus.OK);
 	}
 	
 	@PostMapping("/deleteAccount")
 	ResponseEntity<?> deleteAccount(@RequestBody Long id){
-		if(service.accountExist(id)) {
-			service.deleteAccountById(id);
+		if(accountService.accountExist(id)) {
+			accountService.deleteAccountById(id);
 			return new ResponseEntity<String>("The account with id:" + id + " has been deleted", HttpStatus.OK);
 		}
-		return new ResponseEntity<List<Account>>(service.findAllAccount(), HttpStatus.OK);
+		return new ResponseEntity<List<Account>>(accountService.findAllAccount(), HttpStatus.OK);
 		
 	}
 	

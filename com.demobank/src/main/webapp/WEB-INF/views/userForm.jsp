@@ -181,7 +181,7 @@ body {
 		</form:form>
 	</div>
 	<!--Display the user only the login role is admin or manager -->
-	<sec:authorize access="hasAuthority('admin') || hasRole('Admin')">
+	<sec:authorize access="hasAuthority('admin')">
 
 		<c:if test="${not empty users}">
 

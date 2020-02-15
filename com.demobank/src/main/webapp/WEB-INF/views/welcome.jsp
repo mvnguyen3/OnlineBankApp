@@ -1,5 +1,7 @@
 
+<%@page import="com.demobank.service.UserService"%>
 <%@page import="com.demobank.domain.User"%>
+<%@page import="com.demobank.service.UserServiceImp"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
 <%@  taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -35,9 +37,9 @@ body {
 		<a href="/login?logout">Logout
 			${pageContext.request.userPrincipal.authorities[0]}</a>
 	</p>
-	<p>
+	<%-- <p>
 		<!-- Use to check the role of the user -->
-	<%-- <p>${pageContext.request.userPrincipal}</p> --%>
+	<p>${pageContext.request.userPrincipal}</p> --%>
 
 
 
@@ -54,7 +56,7 @@ body {
 
 
 	<div>
-		<sec:authorize access="hasAuthority('admin') || hasRole('Admin')">
+		<sec:authorize access="hasAuthority('admin')">
 			<p>
 				Welcome <b>${pageContext.request.userPrincipal.name}</b>
 			<p>
@@ -76,7 +78,7 @@ body {
 	</div>
 
 	<div>
-		<sec:authorize access="hasAuthority('user') || hasRole('User')">
+		<sec:authorize access="hasAuthority('user')">
 			<p>
 				Welcome <b>${pageContext.request.userPrincipal.name}</b>
 				<%-- <p>

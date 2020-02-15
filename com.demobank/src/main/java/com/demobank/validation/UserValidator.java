@@ -6,14 +6,13 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import com.demobank.domain.User;
-import com.demobank.service.UnifiedService;
 import com.demobank.service.UserService;
 
 @Component
 public class UserValidator implements Validator {
 
 	@Autowired
-	UnifiedService service;
+	UserService userService;
 
 	@Override
 	public boolean supports(Class<?> clazz) {
@@ -34,10 +33,10 @@ public class UserValidator implements Validator {
 		
 		// Validate user through email address.
 		try {
-			if (service.findUserById(userId).getUserEmail().equals(user.getUserEmail())) {
+			if (userService.findUserById(userId).getUserEmail().equals(user.getUserEmail())) {
 				errors.rejectValue("userEmail", "user.userEmail.exists", user.getUserEmail() + " is already existed !!!");
 			}
-			if (service.findUserById(userId).getUsername().equals(user.getUsername())) {
+			if (userService.findUserById(userId).getUsername().equals(user.getUsername())) {
 				errors.rejectValue("username", "user.username.exists", user.getUsername() + " is already existed !!!");
 			}
 			

@@ -25,10 +25,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	@Autowired
 	UserDetailsService userDetailsService;
 	
-	// Saved credential in memory...
+	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception{
-//		auth.inMemoryAuthentication().withUser("corona").password(pbkdf2.encode("corona")).roles("Programmer", "Admin");
+//		auth.inMemoryAuthentication().withUser("minh").password(pbkdf2.encode("minh")).roles("Programmer", "Admin");
 //		auth.inMemoryAuthentication().withUser("hailey").password(pbkdf2.encode("hailey")).roles("Programmer", "Admin");
 //		auth.inMemoryAuthentication().withUser("goku").password(pbkdf2.encode("goku")).roles("User", "Programmer");
 		auth.userDetailsService(userDetailsService).passwordEncoder(pbkdf2);  
@@ -62,8 +62,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	Pbkdf2PasswordEncoder pbkdf2() {
 		Pbkdf2PasswordEncoder pbkdf2 = new Pbkdf2PasswordEncoder();		
 		
-//		System.out.println("Username: corona encoded password: " + pbkdf2.encode("corona")
-//		+ " length: " + pbkdf2.encode("corona").length());
+//		System.out.println("Username: minh encoded password: " + pbkdf2.encode("minh")
+//		+ " length: " + pbkdf2.encode("minh").length());
 //		System.out.println("Username: hailey encoded password: " + pbkdf2.encode("hailey")
 //		+ " length: " + pbkdf2.encode("hailey").length());
 //		System.out.println("Username: goku encoded password: " + pbkdf2.encode("goku")

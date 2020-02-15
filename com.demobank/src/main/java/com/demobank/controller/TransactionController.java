@@ -25,14 +25,13 @@ import org.springframework.web.servlet.ModelAndView;
 import com.demobank.domain.Account;
 import com.demobank.domain.Transaction;
 import com.demobank.service.TransactionService;
-import com.demobank.service.UnifiedService;
 import com.demobank.validation.TransactionValidator;
 
 @Controller
 public class TransactionController {
 
 	@Autowired
-	UnifiedService service;
+	TransactionService service;
 
 	@Autowired
 	TransactionValidator validator;

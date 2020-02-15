@@ -33,7 +33,6 @@ import com.demobank.service.BranchService;
 import com.demobank.service.CustomerService;
 import com.demobank.service.RoleService;
 import com.demobank.service.TransactionService;
-import com.demobank.service.UnifiedService;
 import com.demobank.service.UserService;
 import com.demobank.validation.UserValidator;
 import com.demobank.config.SecurityConfig.*;
@@ -41,8 +40,26 @@ import com.demobank.config.SecurityConfig.*;
 @Controller
 public class UserController {
 
+	private static final User userAdmin = null;
+
 	@Autowired
-	UnifiedService service;
+	UserService userService;
+
+	// Use to save userId with UserRole
+	@Autowired
+	RoleService roleService;
+
+	@Autowired
+	CustomerService customerService;
+
+	@Autowired
+	AccountService accountService;
+
+	@Autowired
+	TransactionService tranService;
+
+	@Autowired
+	BranchService branchService;
 
 	@Autowired
 	UserValidator userValidator;
@@ -73,11 +90,11 @@ public class UserController {
 	@RequestMapping("/userForm")
 	ModelAndView userForm(User user, HttpSession session, Principal pl) {
 		ModelAndView modelAndView = new ModelAndView("userForm");
-		modelAndView.addObject("users", service.findAllUsers());
+		modelAndView.addObject("users", userService.findAllUsers());
 
 		try {
-			if (service.findByUserName(pl.getName()) != null) {
-				User currentUser = service.findByUserName(pl.getName());
+			if (userService.findByUserName(pl.getName()) != null) {
+				User currentUser = userService.findByUserName(pl.getName());
 				System.out.println("Current User: ***Admin***");
 				session.setAttribute("user", currentUser);
 				session.setAttribute("Admin", "In session");
@@ -90,7 +107,7 @@ public class UserController {
 
 		try {
 
-			user.setUserId(service.getUserMaxId());
+			user.setUserId(userService.getUserMaxId());
 		} catch (Exception e) {
 			System.out.println("Sign Up User");
 		}
@@ -102,7 +119,7 @@ public class UserController {
 	// Set back the View Which contains all the Object
 	ModelAndView userFormView(ModelAndView modelAndView) {
 		modelAndView.setViewName("userForm");
-		modelAndView.addObject("users", service.findAllUsers());
+		modelAndView.addObject("users", userService.findAllUsers());
 
 		return modelAndView;
 	}
@@ -111,7 +128,7 @@ public class UserController {
 	@PostMapping("/saveUserForm")
 	ModelAndView saveForm(@ModelAttribute @Valid User user, BindingResult br, HttpSession session) {
 		ModelAndView modelAndView = new ModelAndView();
-		System.out.println(service.findAllUsers());
+		System.out.println(userService.findAllUsers());
 		// For Validation
 		if (br.hasErrors()) {
 			System.out.println("Error");
@@ -121,12 +138,12 @@ public class UserController {
 			session.setAttribute("newUser", "Not Null");
 			user.setPassword(pbkdf2.encode(user.getPassword()));			
 			if(user.getUserId() > 0L) {
-				service.saveLinkUserRole(user.getUserId(), 2L); // If the userId is more than 0. They are normal user.
-				service.saveUser(user);
+				roleService.saveLinkUserRole(user.getUserId(), 2L); // If the userId is more than 0. They are normal user.
+				userService.saveUser(user);
 			}					
 			else {
-				service.saveLinkUserRole(user.getUserId(), 1L); 
-				service.saveUser(user);
+				roleService.saveLinkUserRole(user.getUserId(), 1L); 
+				userService.saveUser(user);
 			}
 			return userFormView(modelAndView);
 		}
@@ -140,7 +157,7 @@ public class UserController {
 
 		try {
 			
-			List<Customer> customers = service.findAllCustomer();
+			List<Customer> customers = customerService.findAllCustomer();
 			for(Customer c: customers) {
 				if(c.getUsers().getUserId() == userId) {
 					System.out.println("Can't delete user \nThere is a customer's account which linked to this user");
@@ -150,7 +167,7 @@ public class UserController {
 					
 				else {
 					session.setAttribute("status", "success");
-					service.deleteUserById(userId);
+					userService.deleteUserById(userId);
 					modelAndView.addObject("status", "User with id: " + userId + " has been deleted successfully");
 				}
 			}
@@ -241,13 +258,13 @@ public class UserController {
 		User tempUser = user;
 		System.out.println("userId: " + userId);
 		// Then delete the selected user on the database
-		service.deleteUserById(userId);
+		userService.deleteUserById(userId);
 
 		// Finally, modify the temp user and save it back to the database
 		tempUser.setUserEmail(userEmail);
 		tempUser.setUserMobile(userMobile);
 
-		service.saveUser(tempUser);
+		userService.saveUser(tempUser);
 		System.out.println("Saving user: " + tempUser);
 		modelAndView.addObject("status", "Updated user with id: " + userId);
 
@@ -270,18 +287,18 @@ public class UserController {
 		
 		// ************** Initializing *************
 		try {
-			if (service.findAllBranch().isEmpty()) {
+			if (branchService.findAllBranch().isEmpty()) {
 				System.out.println("Initializing branch...");
-				service.saveBranch(new Branch("US", "Il", "Chicago", "60630"));
+				branchService.saveBranch(new Branch("US", "Il", "Chicago", "60630"));
 
 			}
 			// *********
 
 			// Initialize Role
-				if(service.findRole().isEmpty()) {				
+				if(roleService.findRole().isEmpty()) {				
 					System.out.println("Initializing role...");
-					service.saveRole(1L, "admin");
-					service.saveRole(2L, "user");
+					roleService.saveRole(1L, "admin");
+					roleService.saveRole(2L, "user");
 					
 				}		
 			// **************

@@ -8,15 +8,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.demobank.service.MailService;
-import com.demobank.service.UnifiedService;
 
+import com.demobank.service.MailServiceImpl;
 
 @Controller
 public class ContactController {
 
 	@Autowired
-	UnifiedService service;
+	MailServiceImpl mailservice;
 	
 	@RequestMapping("/contact")
 	ModelAndView mainView() {
@@ -37,7 +36,7 @@ public class ContactController {
 		ModelAndView model = new ModelAndView();
 		System.out.println("email: " + email + " description: " + description);
 		String destinationEmail = "synergyit171@gmail.com";
-		service.sendMail(destinationEmail, email, description);
+		mailservice.sendMail(destinationEmail, email, description);
 		model.addObject("status", "Thank you!! \nOur team will reach out to you as soon as possible");
 		
 		

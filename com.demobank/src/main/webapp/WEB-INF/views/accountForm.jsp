@@ -93,7 +93,7 @@ body {
 			<tbody>
 				<tr>
 					<!-- For Admin use only  -->
-					<sec:authorize access="hasAuthority('admin') || hasRole('Admin')">
+					<sec:authorize access="hasAuthority('admin')">
 						<td><a href="/userForm"><button id="userBtn"
 									class="btn btn-primary">User</button></a></td>
 					</sec:authorize>
@@ -223,7 +223,7 @@ body {
 		</c:if>
 	</sec:authorize>
 
-	<sec:authorize access="hasAuthority('admin') || hasRole('Admin')">
+	<sec:authorize access="hasAuthority('admin')">
 		<c:if test="${not empty accounts}">
 			<div style="overflow: auto; height: 400px">
 				<table border="1">

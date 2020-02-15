@@ -10,14 +10,13 @@ import org.springframework.stereotype.Service;
 
 import com.demobank.domain.User;
 import com.demobank.repository.UserRepository;
-import com.demobank.service.UnifiedService;
 import com.demobank.service.UserService;
 
 @Service
 public class UserWebServiceImpl implements UserWebService {
 
 	@Autowired
-	UnifiedService service;
+	UserService service;
 	
 	
 	
